@@ -4,13 +4,16 @@ import org.apollo.game.GameConstants
 import org.apollo.game.action.ActionBlock
 import org.apollo.game.action.AsyncDistancedAction
 import org.apollo.game.message.impl.ObjectActionMessage
+import org.apollo.game.model.Animation
 import org.apollo.game.model.Position
 import org.apollo.game.model.World
 import org.apollo.game.model.entity.Player
+import org.apollo.game.model.entity.Skill
 import org.apollo.game.model.entity.obj.GameObject
 import org.apollo.game.plugin.api.*
 import org.apollo.game.plugin.skills.woodcutting.Axe
 import org.apollo.game.plugin.skills.woodcutting.Tree
+import java.util.*
 
 // TODO Accurate chopping rates, e.g. https://twitter.com/JagexKieren/status/713403124464107520
 
@@ -77,28 +80,37 @@ class WoodcuttingAction(
             stop()
         }
 
+        mob.sendMessage("You swing your axe at the tree.")
+
         while (isRunning) {
-            mob.sendMessage("You swing your axe at the tree.")
             mob.playAnimation(tool.animation)
+            wait(1) //never award immediately
+            val chance = target.tree.getSuccessChance(mob, tool)
+            println(chance)
+            if (Random().nextInt(256) <= chance) {
+                // Check that the object exists in the world
+                val obj = target.getObject(mob.world) ?: stop()
 
-            wait(tool.pulses)
+                if (mob.inventory.add(target.tree.id)) {
+                    val logName = Definitions.item(target.tree.id).name.toLowerCase()
+                    mob.sendMessage("You managed to cut some $logName.")
+                    mob.playAnimation(Animation.STOP_ANIMATION)
+                    mob.woodcutting.experience += target.tree.exp
+                    mob.skillSet.setSkill(Skill.WOODCUTTING, Skill(mob.woodcutting.experience, mob.woodcutting.maximum, mob.woodcutting.maximum))
+                    mob.skillSet.forceRefresh()
+                    mob.skillSet.setSkill(Skill.WOODCUTTING, Skill(mob.woodcutting.experience, mob.woodcutting.maximum, mob.woodcutting.maximum))
+                    mob.skillSet.forceRefresh()
+                }
 
-            // Check that the object exists in the world
-            val obj = target.getObject(mob.world) ?: stop()
+                if (target.isCutDown()) {
+                    // respawn time: http://runescape.wikia.com/wiki/Trees
+                    val respawn = TimeUnit.SECONDS.toMillis(MINIMUM_RESPAWN_TIME + rand(150)) / GameConstants.PULSE_DELAY
 
-            if (mob.inventory.add(target.tree.id)) {
-                val logName = Definitions.item(target.tree.id).name.toLowerCase()
-                mob.sendMessage("You managed to cut some $logName.")
-                mob.woodcutting.experience += target.tree.exp
-            }
-
-            if (target.isCutDown()) {
-                // respawn time: http://runescape.wikia.com/wiki/Trees
-                val respawn = TimeUnit.SECONDS.toMillis(MINIMUM_RESPAWN_TIME + rand(150)) / GameConstants.PULSE_DELAY
-
-                mob.world.replaceObject(obj, target.tree.stump, respawn.toInt())
-                stop()
-            }
+                    mob.world.replaceObject(obj, target.tree.stump, respawn.toInt())
+                    stop()
+                }
+            } else
+                wait(2)
         }
     }
 }

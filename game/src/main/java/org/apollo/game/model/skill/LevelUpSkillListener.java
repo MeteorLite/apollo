@@ -32,7 +32,8 @@ public final class LevelUpSkillListener extends SkillAdapter {
 		String name = Skill.getName(id);
 		String article = LanguageUtil.getIndefiniteArticle(name);
 		player.sendMessage("You've just advanced " + article + " " + name + " level! You have reached level " + skill.getMaximumLevel() + ".");
-
+		player.getSkillSet().setSkill(id, new Skill(skill.getExperience(), skill.getMaximumLevel(), skill.getMaximumLevel()));
+	  	player.getSkillSet().forceRefresh();
 		if (Skill.isCombatSkill(id)) {
 			player.getSkillSet().calculateCombatLevel();
 		}

@@ -18,17 +18,21 @@ public final class SendTileItemMessage extends RegionUpdateMessage {
 	/**
 	 * The position offset
 	 */
-	private final int positionOffset;
+	private final int x;
+
+  	private final int y;
 
 	/**
 	 * Creates the SendTileItemMessage.
 	 *
 	 * @param item The item to add to the tile.
-	 * @param positionOffset The offset from the 'base' position.
+	 * @param x The world X coordinate
+	 * @param y The world Y coordinate
 	 */
-	public SendTileItemMessage(Item item, int positionOffset) {
+	public SendTileItemMessage(Item item, int x, int y) {
 		this.item = item;
-		this.positionOffset = positionOffset;
+		this.x = x;
+		this.y = y;
 	}
 
 	/**
@@ -40,6 +44,14 @@ public final class SendTileItemMessage extends RegionUpdateMessage {
 		return item.getId();
 	}
 
+  public int getX() {
+	return x;
+  }
+
+  public int getY() {
+	return y;
+  }
+
 	/**
 	 * Gets the amount of the item.
 	 *
@@ -49,20 +61,11 @@ public final class SendTileItemMessage extends RegionUpdateMessage {
 		return item.getAmount();
 	}
 
-	/**
-	 * Gets the offset from the 'base' position.
-	 *
-	 * @return The offset.
-	 */
-	public int getPositionOffset() {
-		return positionOffset;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SendTileItemMessage) {
 			SendTileItemMessage other = (SendTileItemMessage) obj;
-			return item.equals(other.item) && positionOffset == other.positionOffset;
+			return item.equals(other.item) && x == other.x && other.y == y;
 		}
 
 		return false;
@@ -71,7 +74,7 @@ public final class SendTileItemMessage extends RegionUpdateMessage {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		return item.hashCode() * prime + positionOffset;
+		return item.hashCode() * prime + x * prime + y * prime;
 	}
 
 	@Override

@@ -421,5 +421,4 @@ public final class Region {
 
 		updates.add(message);
 	}
-
 }

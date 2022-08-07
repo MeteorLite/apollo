@@ -13,6 +13,7 @@ import org.apollo.game.model.area.collision.CollisionManager;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * A decoder which loads {@link MapFile}s and notifies the {@link CollisionManager} of tiles which are blocked,
@@ -58,9 +59,9 @@ public final class WorldMapDecoder implements Runnable {
 	@Override
 	public void run() {
 		Map<Integer, MapIndex> mapIndices = MapIndex.getIndices();
+		for (MapIndex index : mapIndices.values()) {
+			try {
 
-		try {
-			for (MapIndex index : mapIndices.values()) {
 				MapFileDecoder decoder = MapFileDecoder.create(fs, index);
 				MapFile mapFile = decoder.decode();
 				MapPlane[] mapPlanes = mapFile.getPlanes();
@@ -69,9 +70,10 @@ public final class WorldMapDecoder implements Runnable {
 				for (MapPlane plane : mapPlanes) {
 					markTiles(mapX, mapY, plane);
 				}
+
+			} catch (IOException ex) {
+				Logger.getLogger("WorldMap").info("Error decoding packed map - " + index.getPackedCoordinates());
 			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		}
 	}
 

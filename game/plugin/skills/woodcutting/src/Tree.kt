@@ -1,5 +1,9 @@
 package org.apollo.game.plugin.skills.woodcutting
 
+import org.apollo.game.model.entity.Mob
+import org.apollo.game.model.entity.Player
+import org.apollo.game.plugin.api.woodcutting
+
 /*
  * Values thanks to: http://oldschoolrunescape.wikia.com/wiki/Woodcutting
  * https://twitter.com/JagexKieren/status/713409506273787904
@@ -22,6 +26,30 @@ enum class Tree(
     MAHOGANY(MAHOGANY_OBJECTS, id = 6332, stump = 1342, level = 50, exp = 125.0, chance = 12.5),
     YEW(YEW_OBJECTS, id = 1515, stump = 1342, level = 60, exp = 175.0, chance = 12.5),
     MAGIC(MAGIC_OBJECTS, id = 1513, stump = 1324, level = 75, exp = 250.0, chance = 12.5);
+
+    //Success is on a scale of 255, these values very closely match wiki data
+    fun getSuccessChance(player: Player, axe: Axe): Int {
+        val lvl = player.woodcutting.current
+        val max = 255
+        var min = 0
+        var chancePerLvl = 0.0
+        var chance = 0.0
+
+        when (this) {
+            NORMAL -> {
+                when (axe) {
+                    Axe.BRONZE -> {
+                        min = 65
+                        chance = min + ((player.woodcutting.current - 1) * 1.42)
+                    }
+                    else -> {}
+                }
+            }
+            else -> {}
+        }
+
+        return chance.toInt()
+    }
 
     companion object {
         private val TREES = Tree.values().flatMap { tree -> tree.objects.map { Pair(it, tree) } }.toMap()

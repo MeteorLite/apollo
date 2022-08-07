@@ -16,6 +16,7 @@ import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -56,26 +57,27 @@ public final class WorldObjectsDecoder implements Runnable {
 	@Override
 	public void run() {
 		Map<Integer, MapIndex> mapIndices = MapIndex.getIndices();
+		for (MapIndex index : mapIndices.values()) {
+			try {
+				if (index.getPackedCoordinates() != 10288) {
+					MapObjectsDecoder decoder = MapObjectsDecoder.create(fs, index);
+					List<MapObject> objects = decoder.decode();
 
-		try {
-			for (MapIndex index : mapIndices.values()) {
-				MapObjectsDecoder decoder = MapObjectsDecoder.create(fs, index);
-				List<MapObject> objects = decoder.decode();
+					int mapX = index.getX(), mapY = index.getY();
 
-				int mapX = index.getX(), mapY = index.getY();
+					for (MapObject object : objects) {
+						Position position = new Position(mapX + object.getLocalX(), mapY + object.getLocalY(),
+								object.getHeight());
 
-				for (MapObject object : objects) {
-					Position position = new Position(mapX + object.getLocalX(), mapY + object.getLocalY(),
-						object.getHeight());
+						StaticGameObject gameObject = new StaticGameObject(world, object.getId(), position,
+								object.getType(), object.getOrientation());
 
-					StaticGameObject gameObject = new StaticGameObject(world, object.getId(), position,
-						object.getType(), object.getOrientation());
-
-					regionRepository.fromPosition(position).addEntity(gameObject, false);
+						regionRepository.fromPosition(position).addEntity(gameObject, false);
+					}
 				}
+			} catch (IOException ex) {
+				Logger.getLogger("WorldObjects").info("Error decoding packed map objects - " + index.getPackedCoordinates());
 			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		}
 	}
 }

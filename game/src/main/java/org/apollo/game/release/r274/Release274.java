@@ -66,6 +66,7 @@ public class Release274 extends Release {
 
 		register(185, new FirstItemOptionMessageDecoder());
 		register(2, new SecondItemOptionMessageDecoder());
+	  	register(42, new FourthItemOptionMessageDecoder());
 
 		register(74, new FirstItemActionMessageDecoder());
 
@@ -113,5 +114,7 @@ public class Release274 extends Release {
 		register(RemoveObjectMessage.class, new RemoveObjectMessageEncoder());
 		register(SendObjectMessage.class, new SendObjectMessageEncoder());
 		register(DisplayCrossbonesMessage.class, new DisplayCrossbonesMessageEncoder());
+	  	register(SendTileItemMessage.class, new AddTileItemMessageEncoder());
+	  	register(UpdateBaseCoordsMessage.class, new UpdateBaseCoordsMessageEncoder());
 	}
 }

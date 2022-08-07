@@ -8,6 +8,8 @@ import org.apollo.game.message.impl.ClearRegionMessage;
 import org.apollo.game.message.impl.GroupedRegionUpdateMessage;
 import org.apollo.game.message.impl.RegionChangeMessage;
 import org.apollo.game.message.impl.RegionUpdateMessage;
+import org.apollo.game.message.impl.SetUpdatedRegionMessage;
+import org.apollo.game.message.impl.UpdateBaseCoordsMessage;
 import org.apollo.game.model.Position;
 import org.apollo.game.model.area.Region;
 import org.apollo.game.model.area.RegionCoordinates;
@@ -72,13 +74,13 @@ public final class PrePlayerSynchronizationTask extends SynchronizationTask {
 			local = false;
 
 			player.setLastKnownRegion(position);
+
 			player.send(new RegionChangeMessage(position));
 		}
 
 		RegionRepository repository = player.getWorld().getRegionRepository();
 		Set<RegionCoordinates> oldViewable = repository.fromPosition(old).getSurrounding();
 		Set<RegionCoordinates> newViewable = repository.fromPosition(position).getSurrounding();
-
 		Set<RegionCoordinates> differences = new HashSet<>(newViewable);
 		differences.retainAll(oldViewable);
 
@@ -87,7 +89,8 @@ public final class PrePlayerSynchronizationTask extends SynchronizationTask {
 			full.removeAll(oldViewable);
 		}
 
-		sendUpdates(player.getLastKnownRegion(), differences, full);
+	  player.send(new UpdateBaseCoordsMessage(repository.fromPosition(position).getCoordinates().getAbsoluteX(), repository.fromPosition(position).getCoordinates().getAbsoluteY()));
+	  sendUpdates(player.getLastKnownRegion(), differences, full);
 	}
 
 	/**

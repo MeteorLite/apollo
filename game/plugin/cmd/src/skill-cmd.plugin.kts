@@ -52,6 +52,8 @@ on_command("level", PrivilegeLevel.ADMINISTRATOR)
         }
 
         player.skillSet.setSkill(skillId, Skill(experience, current, level))
+        player.skillSet.calculateCombatLevel()
+        player.skillSet.forceRefresh()
     }
 
 /**
