@@ -13,15 +13,15 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class PrivacyOptionMessageEncoder extends MessageEncoder<PrivacyOptionMessage> {
 
-	@Override
-	public GamePacket encode(final PrivacyOptionMessage message) {
-		final GamePacketBuilder builder = new GamePacketBuilder(206);
+  @Override
+  public GamePacket encode(final PrivacyOptionMessage message) {
+    final GamePacketBuilder builder = new GamePacketBuilder(206);
 
-		builder.put(DataType.BYTE, message.getChatPrivacy().toInteger(true));
-		builder.put(DataType.BYTE, message.getFriendPrivacy().toInteger(true));
-		builder.put(DataType.BYTE, message.getTradePrivacy().toInteger(true));
+    builder.put(DataType.BYTE, message.getChatPrivacy().toInteger(true));
+    builder.put(DataType.BYTE, message.getFriendPrivacy().toInteger(true));
+    builder.put(DataType.BYTE, message.getTradePrivacy().toInteger(true));
 
-		return builder.toGamePacket();
-	}
+    return builder.toGamePacket();
+  }
 
 }

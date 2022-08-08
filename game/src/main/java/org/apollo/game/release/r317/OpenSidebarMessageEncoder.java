@@ -14,11 +14,11 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class OpenSidebarMessageEncoder extends MessageEncoder<OpenSidebarMessage> {
 
-	@Override
-	public GamePacket encode(OpenSidebarMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(142);
-		builder.put(DataType.SHORT, DataOrder.LITTLE, message.getSidebarId());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(OpenSidebarMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(142);
+    builder.put(DataType.SHORT, DataOrder.LITTLE, message.getSidebarId());
+    return builder.toGamePacket();
+  }
 
 }

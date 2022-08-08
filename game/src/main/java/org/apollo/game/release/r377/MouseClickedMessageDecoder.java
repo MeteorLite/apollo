@@ -13,19 +13,19 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class MouseClickedMessageDecoder extends MessageDecoder<MouseClickedMessage> {
 
-	@Override
-	public MouseClickedMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		int value = (int) reader.getUnsigned(DataType.INT);
+  @Override
+  public MouseClickedMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    int value = (int) reader.getUnsigned(DataType.INT);
 
-		long delay = (value >> 20) * 50;
-		boolean right = (value >> 19 & 0x1) == 1;
+    long delay = (value >> 20) * 50;
+    boolean right = (value >> 19 & 0x1) == 1;
 
-		int cords = value & 0x3FFFF;
-		int x = cords % 765;
-		int y = cords / 765;
+    int cords = value & 0x3FFFF;
+    int x = cords % 765;
+    int y = cords / 765;
 
-		return new MouseClickedMessage(delay, right, x, y);
-	}
+    return new MouseClickedMessage(delay, right, x, y);
+  }
 
 }

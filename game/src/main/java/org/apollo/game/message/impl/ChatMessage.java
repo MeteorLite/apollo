@@ -9,42 +9,42 @@ import org.apollo.net.message.Message;
  */
 public abstract class ChatMessage extends Message {
 
-	/**
-	 * The message.
-	 */
-	private final String message;
+  /**
+   * The message.
+   */
+  private final String message;
 
-	/**
-	 * The compressed message.
-	 */
-	private final byte[] compressedMessage;
+  /**
+   * The compressed message.
+   */
+  private final byte[] compressedMessage;
 
-	/**
-	 * Creates a new chat message.
-	 *
-	 * @param message The message.
-	 * @param compressedMessage The compressed message.
-	 */
-	public ChatMessage(String message, byte[] compressedMessage) {
-		this.message = message;
-		this.compressedMessage = compressedMessage.clone();
-	}
+  /**
+   * Creates a new chat message.
+   *
+   * @param message           The message.
+   * @param compressedMessage The compressed message.
+   */
+  public ChatMessage(String message, byte[] compressedMessage) {
+    this.message = message;
+    this.compressedMessage = compressedMessage.clone();
+  }
 
-	/**
-	 * Gets the compressed message.
-	 *
-	 * @return The compressed message.
-	 */
-	public final byte[] getCompressedMessage() {
-		return compressedMessage.clone();
-	}
+  /**
+   * Gets the compressed message.
+   *
+   * @return The compressed message.
+   */
+  public final byte[] getCompressedMessage() {
+    return compressedMessage.clone();
+  }
 
-	/**
-	 * Gets the message.
-	 *
-	 * @return The message.
-	 */
-	public final String getMessage() {
-		return message;
-	}
+  /**
+   * Gets the message.
+   *
+   * @return The message.
+   */
+  public final String getMessage() {
+    return message;
+  }
 }

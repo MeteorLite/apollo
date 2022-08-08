@@ -13,16 +13,17 @@ import org.apollo.net.release.MessageEncoder;
  *
  * @author Chris Fletcher
  */
-public final class SetWidgetModelAnimationMessageEncoder extends MessageEncoder<SetWidgetModelAnimationMessage> {
+public final class SetWidgetModelAnimationMessageEncoder extends
+    MessageEncoder<SetWidgetModelAnimationMessage> {
 
-	@Override
-	public GamePacket encode(SetWidgetModelAnimationMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(2);
+  @Override
+  public GamePacket encode(SetWidgetModelAnimationMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(2);
 
-		builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.getInterfaceId());
-		builder.put(DataType.SHORT, DataTransformation.ADD, message.getAnimation() & 0xFFFF);
+    builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.getInterfaceId());
+    builder.put(DataType.SHORT, DataTransformation.ADD, message.getAnimation() & 0xFFFF);
 
-		return builder.toGamePacket();
-	}
+    return builder.toGamePacket();
+  }
 
 }

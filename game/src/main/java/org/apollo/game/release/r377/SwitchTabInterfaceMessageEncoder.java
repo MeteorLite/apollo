@@ -12,14 +12,15 @@ import org.apollo.net.release.MessageEncoder;
  *
  * @author Graham
  */
-public final class SwitchTabInterfaceMessageEncoder extends MessageEncoder<SwitchTabInterfaceMessage> {
+public final class SwitchTabInterfaceMessageEncoder extends
+    MessageEncoder<SwitchTabInterfaceMessage> {
 
-	@Override
-	public GamePacket encode(SwitchTabInterfaceMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(10);
-		builder.put(DataType.BYTE, DataTransformation.SUBTRACT, message.getTabId());
-		builder.put(DataType.SHORT, DataTransformation.ADD, message.getInterfaceId());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(SwitchTabInterfaceMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(10);
+    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, message.getTabId());
+    builder.put(DataType.SHORT, DataTransformation.ADD, message.getInterfaceId());
+    return builder.toGamePacket();
+  }
 
 }

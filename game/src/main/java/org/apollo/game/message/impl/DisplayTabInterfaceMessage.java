@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class DisplayTabInterfaceMessage extends Message {
 
-	/**
-	 * The tab index.
-	 */
-	private final int tab;
+  /**
+   * The tab index.
+   */
+  private final int tab;
 
-	/**
-	 * Creates a new display tab interface message.
-	 *
-	 * @param tab The index of the tab to display.
-	 */
-	public DisplayTabInterfaceMessage(int tab) {
-		this.tab = tab;
-	}
+  /**
+   * Creates a new display tab interface message.
+   *
+   * @param tab The index of the tab to display.
+   */
+  public DisplayTabInterfaceMessage(int tab) {
+    this.tab = tab;
+  }
 
-	/**
-	 * Gets the index of the tab to display.
-	 *
-	 * @return The tab index.
-	 */
-	public int getTab() {
-		return tab;
-	}
+  /**
+   * Gets the index of the tab to display.
+   *
+   * @return The tab index.
+   */
+  public int getTab() {
+    return tab;
+  }
 
 }

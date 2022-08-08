@@ -14,12 +14,12 @@ import org.apollo.util.NameUtil;
  */
 public final class SendFriendMessageEncoder extends MessageEncoder<SendFriendMessage> {
 
-	@Override
-	public GamePacket encode(SendFriendMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(78);
-		builder.put(DataType.LONG, NameUtil.encodeBase37(message.getUsername()));
-		builder.put(DataType.BYTE, message.getEncodedWorld());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(SendFriendMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(78);
+    builder.put(DataType.LONG, NameUtil.encodeBase37(message.getUsername()));
+    builder.put(DataType.BYTE, message.getEncodedWorld());
+    return builder.toGamePacket();
+  }
 
 }

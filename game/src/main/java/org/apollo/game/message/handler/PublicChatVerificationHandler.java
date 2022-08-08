@@ -11,22 +11,22 @@ import org.apollo.game.model.entity.Player;
  */
 public final class PublicChatVerificationHandler extends MessageHandler<PublicChatMessage> {
 
-	/**
-	 * Creates the PublicChatVerificationHandler.
-	 *
-	 * @param world The {@link World} the {@link PublicChatMessage} occurred in.
-	 */
-	public PublicChatVerificationHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the PublicChatVerificationHandler.
+   *
+   * @param world The {@link World} the {@link PublicChatMessage} occurred in.
+   */
+  public PublicChatVerificationHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, PublicChatMessage message) {
-		int color = message.getTextColor();
-		int effects = message.getTextEffects();
-		if (color < 0 || color > 11 || effects < 0 || effects > 5) {
-			message.terminate();
-		}
-	}
+  @Override
+  public void handle(Player player, PublicChatMessage message) {
+    int color = message.getTextColor();
+    int effects = message.getTextEffects();
+    if (color < 0 || color > 11 || effects < 0 || effects > 5) {
+      message.terminate();
+    }
+  }
 
 }

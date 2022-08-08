@@ -16,15 +16,15 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class SetUpdatedRegionMessageEncoder extends MessageEncoder<SetUpdatedRegionMessage> {
 
-	@Override
-	public GamePacket encode(SetUpdatedRegionMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(75);
-		Position base = message.getPlayerPosition(), position = message.getRegionPosition();
+  @Override
+  public GamePacket encode(SetUpdatedRegionMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(75);
+    Position base = message.getPlayerPosition(), position = message.getRegionPosition();
 
-		builder.put(DataType.BYTE, DataTransformation.NEGATE, position.getLocalX(base));
-		builder.put(DataType.BYTE, DataTransformation.ADD, position.getLocalY(base));
+    builder.put(DataType.BYTE, DataTransformation.NEGATE, position.getLocalX(base));
+    builder.put(DataType.BYTE, DataTransformation.ADD, position.getLocalY(base));
 
-		return builder.toGamePacket();
-	}
+    return builder.toGamePacket();
+  }
 
 }

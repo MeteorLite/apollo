@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class AddFriendMessage extends Message {
 
-	/**
-	 * The username of the befriended player.
-	 */
-	private final String username;
+  /**
+   * The username of the befriended player.
+   */
+  private final String username;
 
-	/**
-	 * Creates a new befriend user message.
-	 *
-	 * @param username The befriended player's username.
-	 */
-	public AddFriendMessage(String username) {
-		this.username = username;
-	}
+  /**
+   * Creates a new befriend user message.
+   *
+   * @param username The befriended player's username.
+   */
+  public AddFriendMessage(String username) {
+    this.username = username;
+  }
 
-	/**
-	 * Gets the username of the befriended player.
-	 *
-	 * @return The username.
-	 */
-	public String getUsername() {
-		return username;
-	}
+  /**
+   * Gets the username of the befriended player.
+   *
+   * @return The username.
+   */
+  public String getUsername() {
+    return username;
+  }
 
 }

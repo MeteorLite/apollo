@@ -15,46 +15,47 @@ import org.apollo.game.model.entity.Player;
  */
 public final class NpcActionVerificationHandler extends MessageHandler<NpcActionMessage> {
 
-	/**
-	 * Creates the NpcActionVerificationHandler.
-	 *
-	 * @param world The {@link World} the {@link NpcActionMessage} occurred in.
-	 */
-	public NpcActionVerificationHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the NpcActionVerificationHandler.
+   *
+   * @param world The {@link World} the {@link NpcActionMessage} occurred in.
+   */
+  public NpcActionVerificationHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, NpcActionMessage message) {
-		int index = message.getIndex();
-		MobRepository<Npc> repository = world.getNpcRepository();
+  @Override
+  public void handle(Player player, NpcActionMessage message) {
+    int index = message.getIndex();
+    MobRepository<Npc> repository = world.getNpcRepository();
 
-		if (index < 0 || index >= repository.capacity()) {
-			message.terminate();
-			return;
-		}
+    if (index < 0 || index >= repository.capacity()) {
+      message.terminate();
+      return;
+    }
 
-		Npc npc = repository.get(index);
+    Npc npc = repository.get(index);
 
-		if (npc == null || !player.getPosition().isWithinDistance(npc.getPosition(), player.getViewingDistance() + 1)) {
-			// +1 in case it was decremented after the player clicked the action.
-			message.terminate();
-			return;
-		}
+    if (npc == null || !player.getPosition()
+        .isWithinDistance(npc.getPosition(), player.getViewingDistance() + 1)) {
+      // +1 in case it was decremented after the player clicked the action.
+      message.terminate();
+      return;
+    }
 
-		NpcDefinition definition = npc.getDefinition();
-		String[] actions = definition.getInteractions();
-		int option = message.getOption();
+    NpcDefinition definition = npc.getDefinition();
+    String[] actions = definition.getInteractions();
+    int option = message.getOption();
 
-		if (option < 0 || option >= actions.length) {
-			message.terminate();
-			return;
-		}
+    if (option < 0 || option >= actions.length) {
+      message.terminate();
+      return;
+    }
 
-		if ("null".equals(actions[option])) {
-			message.terminate();
-			return;
-		}
-	}
+    if ("null".equals(actions[option])) {
+      message.terminate();
+      return;
+    }
+  }
 
 }

@@ -14,13 +14,13 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class FourthItemActionMessageDecoder extends MessageDecoder<ItemActionMessage> {
 
-	@Override
-	public ItemActionMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		int slot = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
-		int interfaceId = (int) reader.getUnsigned(DataType.SHORT);
-		int id = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
-		return new ItemActionMessage(4, interfaceId, id, slot);
-	}
+  @Override
+  public ItemActionMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    int slot = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
+    int interfaceId = (int) reader.getUnsigned(DataType.SHORT);
+    int id = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
+    return new ItemActionMessage(4, interfaceId, id, slot);
+  }
 
 }

@@ -12,10 +12,10 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class CommandMessageDecoder extends MessageDecoder<CommandMessage> {
 
-	@Override
-	public CommandMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		return new CommandMessage(reader.getString());
-	}
+  @Override
+  public CommandMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    return new CommandMessage(reader.getString());
+  }
 
 }

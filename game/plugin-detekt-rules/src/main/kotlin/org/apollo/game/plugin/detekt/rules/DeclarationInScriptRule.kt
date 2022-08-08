@@ -21,11 +21,13 @@ class DeclarationInScriptRule : Rule() {
 
         declarations
             .forEach {
-                report(CodeSmell(
-                    issue,
-                    Entity.from(it),
-                    message = "Declaration of ${it.name} should live in a top-level file, not a script"
-                ))
+                report(
+                    CodeSmell(
+                        issue,
+                        Entity.from(it),
+                        message = "Declaration of ${it.name} should live in a top-level file, not a script"
+                    )
+                )
             }
     }
 }

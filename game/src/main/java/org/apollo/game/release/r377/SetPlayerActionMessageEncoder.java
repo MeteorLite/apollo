@@ -15,13 +15,13 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class SetPlayerActionMessageEncoder extends MessageEncoder<SetPlayerActionMessage> {
 
-	@Override
-	public GamePacket encode(SetPlayerActionMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(157, PacketType.VARIABLE_BYTE);
-		builder.put(DataType.BYTE, DataTransformation.NEGATE, message.getSlot());
-		builder.putString(message.getText());
-		builder.put(DataType.BYTE, message.isPrimaryAction() ? 0 : 1);
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(SetPlayerActionMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(157, PacketType.VARIABLE_BYTE);
+    builder.put(DataType.BYTE, DataTransformation.NEGATE, message.getSlot());
+    builder.putString(message.getText());
+    builder.put(DataType.BYTE, message.isPrimaryAction() ? 0 : 1);
+    return builder.toGamePacket();
+  }
 
 }

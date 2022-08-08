@@ -13,11 +13,11 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class FocusUpdateMessageDecoder extends MessageDecoder<FocusUpdateMessage> {
 
-	@Override
-	public FocusUpdateMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		boolean focused = (byte) reader.getUnsigned(DataType.BYTE) == 1;
-		return new FocusUpdateMessage(focused);
-	}
+  @Override
+  public FocusUpdateMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    boolean focused = (byte) reader.getUnsigned(DataType.BYTE) == 1;
+    return new FocusUpdateMessage(focused);
+  }
 
 }

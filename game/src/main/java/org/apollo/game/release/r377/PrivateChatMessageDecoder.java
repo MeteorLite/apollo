@@ -15,24 +15,24 @@ import org.apollo.util.TextUtil;
  */
 public final class PrivateChatMessageDecoder extends MessageDecoder<PrivateChatMessage> {
 
-	@Override
-	public PrivateChatMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
+  @Override
+  public PrivateChatMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
 
-		String username = NameUtil.decodeBase37(reader.getSigned(DataType.LONG));
-		int length = packet.getLength() - Long.BYTES;
+    String username = NameUtil.decodeBase37(reader.getSigned(DataType.LONG));
+    int length = packet.getLength() - Long.BYTES;
 
-		byte[] originalCompressed = new byte[length];
-		reader.getBytes(originalCompressed);
+    byte[] originalCompressed = new byte[length];
+    reader.getBytes(originalCompressed);
 
-		String decompressed = TextUtil.decompress(originalCompressed, length);
-		decompressed = TextUtil.filterInvalidCharacters(decompressed);
-		decompressed = TextUtil.capitalize(decompressed);
+    String decompressed = TextUtil.decompress(originalCompressed, length);
+    decompressed = TextUtil.filterInvalidCharacters(decompressed);
+    decompressed = TextUtil.capitalize(decompressed);
 
-		byte[] recompressed = new byte[length];
-		TextUtil.compress(decompressed, recompressed);
+    byte[] recompressed = new byte[length];
+    TextUtil.compress(decompressed, recompressed);
 
-		return new PrivateChatMessage(decompressed, recompressed, username);
-	}
+    return new PrivateChatMessage(decompressed, recompressed, username);
+  }
 
 }

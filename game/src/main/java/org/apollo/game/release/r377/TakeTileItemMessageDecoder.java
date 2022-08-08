@@ -16,13 +16,13 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class TakeTileItemMessageDecoder extends MessageDecoder<TakeTileItemMessage> {
 
-	@Override
-	public TakeTileItemMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		int id = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
-		int x = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
-		int y = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
-		return new TakeTileItemMessage(id, new Position(x, y));
-	}
+  @Override
+  public TakeTileItemMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    int id = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
+    int x = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
+    int y = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
+    return new TakeTileItemMessage(id, new Position(x, y));
+  }
 
 }

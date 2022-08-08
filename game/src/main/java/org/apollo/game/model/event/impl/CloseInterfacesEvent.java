@@ -11,13 +11,13 @@ import org.apollo.game.model.event.PlayerEvent;
  */
 public final class CloseInterfacesEvent extends PlayerEvent {
 
-	/**
-	 * Creates the CloseInterfacesEvent.
-	 *
-	 * @param player The {@link Player} whose interfaces are being closed.
-	 */
-	public CloseInterfacesEvent(Player player) {
-		super(player);
-	}
+  /**
+   * Creates the CloseInterfacesEvent.
+   *
+   * @param player The {@link Player} whose interfaces are being closed.
+   */
+  public CloseInterfacesEvent(Player player) {
+    super(player);
+  }
 
 }

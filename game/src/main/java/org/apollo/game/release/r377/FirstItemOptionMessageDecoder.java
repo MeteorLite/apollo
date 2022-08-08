@@ -15,15 +15,15 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class FirstItemOptionMessageDecoder extends MessageDecoder<ItemOptionMessage> {
 
-	@Override
-	public ItemOptionMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
+  @Override
+  public ItemOptionMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
 
-		int interfaceId = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
-		int slot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-		int id = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    int interfaceId = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
+    int slot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    int id = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
 
-		return new ItemOptionMessage(1, interfaceId, id, slot);
-	}
+    return new ItemOptionMessage(1, interfaceId, id, slot);
+  }
 
 }

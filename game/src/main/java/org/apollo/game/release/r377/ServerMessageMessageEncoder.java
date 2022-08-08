@@ -13,11 +13,11 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class ServerMessageMessageEncoder extends MessageEncoder<ServerChatMessage> {
 
-	@Override
-	public GamePacket encode(ServerChatMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(63, PacketType.VARIABLE_BYTE);
-		builder.putString(message.getMessage());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(ServerChatMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(63, PacketType.VARIABLE_BYTE);
+    builder.putString(message.getMessage());
+    return builder.toGamePacket();
+  }
 
 }

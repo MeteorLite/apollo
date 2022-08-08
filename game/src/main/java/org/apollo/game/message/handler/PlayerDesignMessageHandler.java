@@ -12,19 +12,19 @@ import org.apollo.game.model.entity.Player;
  */
 public final class PlayerDesignMessageHandler extends MessageHandler<PlayerDesignMessage> {
 
-	/**
-	 * Creates the PlayerDesignMessageHandler.
-	 *
-	 * @param world The {@link World} the {@link PlayerDesignMessage} occurred in.
-	 */
-	public PlayerDesignMessageHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the PlayerDesignMessageHandler.
+   *
+   * @param world The {@link World} the {@link PlayerDesignMessage} occurred in.
+   */
+  public PlayerDesignMessageHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, PlayerDesignMessage message) {
-		player.setAppearance(message.getAppearance());
-		player.send(new CloseInterfaceMessage());
-	}
+  @Override
+  public void handle(Player player, PlayerDesignMessage message) {
+    player.setAppearance(message.getAppearance());
+    player.send(new CloseInterfaceMessage());
+  }
 
 }

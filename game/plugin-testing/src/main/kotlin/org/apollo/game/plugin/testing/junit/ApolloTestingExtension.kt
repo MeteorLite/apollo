@@ -4,14 +4,6 @@ import io.mockk.every
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.staticMockk
-import kotlin.reflect.KCallable
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.jvmErasure
 import org.apollo.cache.def.ItemDefinition
 import org.apollo.cache.def.NpcDefinition
 import org.apollo.cache.def.ObjectDefinition
@@ -28,6 +20,14 @@ import org.apollo.game.plugin.testing.junit.api.annotations.NpcDefinitions
 import org.apollo.game.plugin.testing.junit.api.annotations.ObjectDefinitions
 import org.apollo.game.plugin.testing.junit.mocking.StubPrototype
 import org.junit.jupiter.api.extension.*
+import kotlin.reflect.KCallable
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.createType
+import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.jvmErasure
 
 class ApolloTestingExtension :
     AfterTestExecutionCallback,
@@ -67,7 +67,8 @@ class ApolloTestingExtension :
             .map { it.kotlin.companionObject }
             .ifPresent { companion ->
                 val companionInstance = companion.objectInstance!!
-                val callables: List<KCallable<*>> = companion.declaredMemberFunctions + companion.declaredMemberProperties
+                val callables: List<KCallable<*>> =
+                    companion.declaredMemberFunctions + companion.declaredMemberProperties
 
                 createTestDefinitions<ItemDefinition, ItemDefinitions>(
                     callables, companionInstance, ItemDefinition::getId, ItemDefinition::lookup,
@@ -110,19 +111,30 @@ class ApolloTestingExtension :
         propertyStubSites.forEach { property ->
             property.setter.call(
                 testClassInstance,
-                state.createStub(StubPrototype(property.returnType.jvmErasure, property.annotations))
+                state.createStub(
+                    StubPrototype(
+                        property.returnType.jvmErasure,
+                        property.annotations
+                    )
+                )
             )
         }
     }
 
-    override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
+    override fun supportsParameter(
+        parameterContext: ParameterContext,
+        extensionContext: ExtensionContext
+    ): Boolean {
         val param = parameterContext.parameter
         val paramType = param.type.kotlin
 
         return supportedTestDoubleTypes.contains(paramType.createType())
     }
 
-    override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
+    override fun resolveParameter(
+        parameterContext: ParameterContext,
+        extensionContext: ExtensionContext
+    ): Any {
         val param = parameterContext.parameter
         val paramType = param.type.kotlin
         val testStore = extensionContext.getStore(namespace)
@@ -155,7 +167,9 @@ class ApolloTestingExtension :
 
             every { lookup(capture(idSlot)) } answers { testDefinitions[idSlot.captured] }
             every { getAll() } answers { testDefinitions.values.sortedBy(idMapper).toTypedArray() }
-            every { count() } answers { _ -> testDefinitions.maxBy { (id, _) -> id }?.key?.let { it + 1 } ?: 0 }
+            every { count() } answers { _ ->
+                testDefinitions.maxBy { (id, _) -> id }.key?.let { it + 1 } ?: 0
+            }
         }
     }
 
@@ -176,8 +190,9 @@ class ApolloTestingExtension :
                 .filter { method -> method.annotations.any { it is A } }
                 .flatMap { method ->
                     @Suppress("UNCHECKED_CAST")
-                    method as? KCallable<Collection<D>> ?: throw RuntimeException("${method.name} is annotated with " +
-                        "${A::class.simpleName} but does not return Collection<${D::class.simpleName}>."
+                    method as? KCallable<Collection<D>> ?: throw RuntimeException(
+                        "${method.name} is annotated with " +
+                                "${A::class.simpleName} but does not return Collection<${D::class.simpleName}>."
                     )
 
                     method.isAccessible = true // lets us call methods in private companion objects

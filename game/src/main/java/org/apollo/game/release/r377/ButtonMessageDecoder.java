@@ -13,11 +13,11 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class ButtonMessageDecoder extends MessageDecoder<ButtonMessage> {
 
-	@Override
-	public ButtonMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		int interfaceId = (int) reader.getUnsigned(DataType.SHORT);
-		return new ButtonMessage(interfaceId);
-	}
+  @Override
+  public ButtonMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    int interfaceId = (int) reader.getUnsigned(DataType.SHORT);
+    return new ButtonMessage(interfaceId);
+  }
 
 }

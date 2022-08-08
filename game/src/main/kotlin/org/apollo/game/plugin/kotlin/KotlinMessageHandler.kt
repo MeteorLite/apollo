@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
  */
 @Deprecated("To be removed")
 class OldKotlinMessageHandler<T : Message>(val world: World, val context: PluginContext, val type: KClass<T>) :
-    KotlinPlayerHandlerProxyTrait<T>, MessageHandler<T>(world) {
+        KotlinPlayerHandlerProxyTrait<T>, MessageHandler<T>(world) {
 
     override var callback: T.(Player) -> Unit = {}
     override var predicate: T.() -> Boolean = { true }

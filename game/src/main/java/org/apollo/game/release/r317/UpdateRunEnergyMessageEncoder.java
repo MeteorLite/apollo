@@ -13,11 +13,11 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class UpdateRunEnergyMessageEncoder extends MessageEncoder<UpdateRunEnergyMessage> {
 
-	@Override
-	public GamePacket encode(UpdateRunEnergyMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(110);
-		builder.put(DataType.BYTE, message.getEnergy());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(UpdateRunEnergyMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(110);
+    builder.put(DataType.BYTE, message.getEnergy());
+    return builder.toGamePacket();
+  }
 
 }

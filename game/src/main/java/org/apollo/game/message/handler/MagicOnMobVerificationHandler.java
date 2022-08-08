@@ -12,40 +12,41 @@ import org.apollo.game.model.entity.Player;
  *
  * @author Tom
  */
-public final class MagicOnMobVerificationHandler extends MessageHandler<MagicOnMobMessage>{
+public final class MagicOnMobVerificationHandler extends MessageHandler<MagicOnMobMessage> {
 
-	/**
-	 * Creates the MessageListener.
-	 *
-	 * @param world The {@link World} the {@link MagicOnMobMessage} occurred in.
-	 */
-	public MagicOnMobVerificationHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the MessageListener.
+   *
+   * @param world The {@link World} the {@link MagicOnMobMessage} occurred in.
+   */
+  public MagicOnMobVerificationHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, MagicOnMobMessage message) {
-		int index = message.getIndex();
-		MobRepository<? extends Mob> repository;
+  @Override
+  public void handle(Player player, MagicOnMobMessage message) {
+    int index = message.getIndex();
+    MobRepository<? extends Mob> repository;
 
-		if (message.getType() == EntityType.NPC) {
-			repository = world.getNpcRepository();
-		} else if (message.getType() == EntityType.PLAYER) {
-			repository = world.getPlayerRepository();
-		} else {
-			throw new IllegalStateException("Invalid mob type for message: " + message.toString());
-		}
+    if (message.getType() == EntityType.NPC) {
+      repository = world.getNpcRepository();
+    } else if (message.getType() == EntityType.PLAYER) {
+      repository = world.getPlayerRepository();
+    } else {
+      throw new IllegalStateException("Invalid mob type for message: " + message.toString());
+    }
 
-		if (index < 0 || index >= repository.capacity()) {
-			message.terminate();
-			return;
-		}
+    if (index < 0 || index >= repository.capacity()) {
+      message.terminate();
+      return;
+    }
 
-		Mob mob = repository.get(index);
+    Mob mob = repository.get(index);
 
-		if (mob == null || !player.getPosition().isWithinDistance(mob.getPosition(), player.getViewingDistance() + 1)) {
-			// +1 in case it was decremented after the player clicked the action.
-			message.terminate();
-		}
-	}
+    if (mob == null || !player.getPosition()
+        .isWithinDistance(mob.getPosition(), player.getViewingDistance() + 1)) {
+      // +1 in case it was decremented after the player clicked the action.
+      message.terminate();
+    }
+  }
 }

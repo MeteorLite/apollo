@@ -1,7 +1,6 @@
 package org.apollo.game.release.r317;
 
 import java.util.List;
-
 import org.apollo.game.message.impl.IgnoreListMessage;
 import org.apollo.net.codec.game.DataType;
 import org.apollo.net.codec.game.GamePacket;
@@ -17,16 +16,16 @@ import org.apollo.util.NameUtil;
  */
 public final class IgnoreListMessageEncoder extends MessageEncoder<IgnoreListMessage> {
 
-	@Override
-	public GamePacket encode(IgnoreListMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(214, PacketType.VARIABLE_SHORT);
+  @Override
+  public GamePacket encode(IgnoreListMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(214, PacketType.VARIABLE_SHORT);
 
-		List<String> usernames = message.getUsernames();
-		for (String username : usernames) {
-			builder.put(DataType.LONG, NameUtil.encodeBase37(username));
-		}
+    List<String> usernames = message.getUsernames();
+    for (String username : usernames) {
+      builder.put(DataType.LONG, NameUtil.encodeBase37(username));
+    }
 
-		return builder.toGamePacket();
-	}
+    return builder.toGamePacket();
+  }
 
 }

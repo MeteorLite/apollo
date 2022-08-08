@@ -10,27 +10,27 @@ import org.apollo.net.message.Message;
  */
 public final class PlayerDesignMessage extends Message {
 
-	/**
-	 * The appearance.
-	 */
-	private final Appearance appearance;
+  /**
+   * The appearance.
+   */
+  private final Appearance appearance;
 
-	/**
-	 * Creates the player design message.
-	 *
-	 * @param appearance The appearance.
-	 */
-	public PlayerDesignMessage(Appearance appearance) {
-		this.appearance = appearance;
-	}
+  /**
+   * Creates the player design message.
+   *
+   * @param appearance The appearance.
+   */
+  public PlayerDesignMessage(Appearance appearance) {
+    this.appearance = appearance;
+  }
 
-	/**
-	 * Gets the appearance.
-	 *
-	 * @return The appearance.
-	 */
-	public Appearance getAppearance() {
-		return appearance;
-	}
+  /**
+   * Gets the appearance.
+   *
+   * @return The appearance.
+   */
+  public Appearance getAppearance() {
+    return appearance;
+  }
 
 }

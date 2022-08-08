@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class ServerChatMessage extends Message {
 
-	/**
-	 * The message to send.
-	 */
-	private final String message;
+  /**
+   * The message to send.
+   */
+  private final String message;
 
-	/**
-	 * Creates the ServerChatMessage.
-	 *
-	 * @param message The chat message to send.
-	 */
-	public ServerChatMessage(String message) {
-		this.message = message;
-	}
+  /**
+   * Creates the ServerChatMessage.
+   *
+   * @param message The chat message to send.
+   */
+  public ServerChatMessage(String message) {
+    this.message = message;
+  }
 
-	/**
-	 * Gets the chat message to send.
-	 *
-	 * @return The chat message.
-	 */
-	public String getMessage() {
-		return message;
-	}
+  /**
+   * Gets the chat message to send.
+   *
+   * @return The chat message.
+   */
+  public String getMessage() {
+    return message;
+  }
 
 }

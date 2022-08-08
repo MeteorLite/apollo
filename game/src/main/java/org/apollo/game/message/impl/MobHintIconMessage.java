@@ -8,66 +8,66 @@ import org.apollo.game.model.entity.Mob;
  */
 public final class MobHintIconMessage extends HintIconMessage {
 
-	/**
-	 * Gets the Type of HintIcon for the specified EntityType.
-	 *
-	 * @param entityType The EntityType.
-	 * @return The HintIcon Type for the EntityType.
-	 */
-	private static Type fromEntityType(EntityType entityType) {
-		switch (entityType) {
-			case NPC:
-				return Type.NPC;
-			case PLAYER:
-				return Type.PLAYER;
-			default:
-				throw new UnsupportedOperationException("Only Mob entities are supported.");
-		}
-	}
+  /**
+   * The index of the Mob.
+   */
+  private final int index;
 
-	/**
-	 * Creates a new {@link MobHintIconMessage} for the specified Mob.
-	 *
-	 * @param mob The Mob who will have the HintIcon.
-	 * @return The new {@link MobHintIconMessage}, never {@code null}.
-	 */
-	public static MobHintIconMessage create(Mob mob) {
-		return new MobHintIconMessage(fromEntityType(mob.getEntityType()), mob.getIndex());
-	}
+  /**
+   * Constructs a new {@link MobHintIconMessage} with the specified type.
+   *
+   * @param type  The type of HintIcon.
+   * @param index The index of the Mob.
+   */
+  private MobHintIconMessage(Type type, int index) {
+    super(type);
+    this.index = index;
+  }
 
-	/**
-	 * Resets the HintIcon for the specified EntityType.
-	 *
-	 * @param type The EntityType to reset the HintIcon for.
-	 * @return The new {@link MobHintIconMessage}, never {@code null}.
-	 */
-	public static MobHintIconMessage reset(EntityType type) {
-		return new MobHintIconMessage(fromEntityType(type), -1);
-	}
+  /**
+   * Gets the Type of HintIcon for the specified EntityType.
+   *
+   * @param entityType The EntityType.
+   * @return The HintIcon Type for the EntityType.
+   */
+  private static Type fromEntityType(EntityType entityType) {
+    switch (entityType) {
+      case NPC:
+        return Type.NPC;
+      case PLAYER:
+        return Type.PLAYER;
+      default:
+        throw new UnsupportedOperationException("Only Mob entities are supported.");
+    }
+  }
 
-	/**
-	 * The index of the Mob.
-	 */
-	private final int index;
+  /**
+   * Creates a new {@link MobHintIconMessage} for the specified Mob.
+   *
+   * @param mob The Mob who will have the HintIcon.
+   * @return The new {@link MobHintIconMessage}, never {@code null}.
+   */
+  public static MobHintIconMessage create(Mob mob) {
+    return new MobHintIconMessage(fromEntityType(mob.getEntityType()), mob.getIndex());
+  }
 
-	/**
-	 * Constructs a new {@link MobHintIconMessage} with the specified type.
-	 *
-	 * @param type The type of HintIcon.
-	 * @param index The index of the Mob.
-	 */
-	private MobHintIconMessage(Type type, int index) {
-		super(type);
-		this.index = index;
-	}
+  /**
+   * Resets the HintIcon for the specified EntityType.
+   *
+   * @param type The EntityType to reset the HintIcon for.
+   * @return The new {@link MobHintIconMessage}, never {@code null}.
+   */
+  public static MobHintIconMessage reset(EntityType type) {
+    return new MobHintIconMessage(fromEntityType(type), -1);
+  }
 
-	/**
-	 * Gets the index of the Mob.
-	 *
-	 * @return The index of the Mob.
-	 */
-	public int getIndex() {
-		return index;
-	}
+  /**
+   * Gets the index of the Mob.
+   *
+   * @return The index of the Mob.
+   */
+  public int getIndex() {
+    return index;
+  }
 
 }

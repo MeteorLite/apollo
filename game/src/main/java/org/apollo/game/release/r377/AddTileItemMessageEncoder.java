@@ -14,13 +14,13 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class AddTileItemMessageEncoder extends MessageEncoder<SendTileItemMessage> {
 
-	@Override
-	public GamePacket encode(SendTileItemMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(107);
-		builder.put(DataType.SHORT, message.getId());
-		builder.put(DataType.BYTE, DataTransformation.NEGATE, message.getPositionOffset());
-		builder.put(DataType.SHORT, DataTransformation.ADD, message.getAmount());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(SendTileItemMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(107);
+    builder.put(DataType.SHORT, message.getId());
+    builder.put(DataType.BYTE, DataTransformation.NEGATE, message.getPositionOffset());
+    builder.put(DataType.SHORT, DataTransformation.ADD, message.getAmount());
+    return builder.toGamePacket();
+  }
 
 }

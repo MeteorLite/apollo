@@ -15,14 +15,16 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class SwitchItemMessageDecoder extends MessageDecoder<SwitchItemMessage> {
 
-	@Override
-	public SwitchItemMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		int interfaceId = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
-		boolean inserting = reader.getUnsigned(DataType.BYTE, DataTransformation.NEGATE) == 1;
-		int oldSlot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
-		int newSlot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-		return new SwitchItemMessage(interfaceId, inserting, oldSlot, newSlot);
-	}
+  @Override
+  public SwitchItemMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    int interfaceId = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE,
+        DataTransformation.ADD);
+    boolean inserting = reader.getUnsigned(DataType.BYTE, DataTransformation.NEGATE) == 1;
+    int oldSlot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE,
+        DataTransformation.ADD);
+    int newSlot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    return new SwitchItemMessage(interfaceId, inserting, oldSlot, newSlot);
+  }
 
 }

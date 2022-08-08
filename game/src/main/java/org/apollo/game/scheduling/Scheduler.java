@@ -1,12 +1,11 @@
 package org.apollo.game.scheduling;
 
-import org.apollo.util.CollectionUtil;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
+import org.apollo.util.CollectionUtil;
 
 /**
  * A class which manages {@link ScheduledTask}s.
@@ -15,40 +14,40 @@ import java.util.Queue;
  */
 public final class Scheduler {
 
-	/**
-	 * The Queue of tasks that are pending execution.
-	 */
-	private final Queue<ScheduledTask> pending = new ArrayDeque<>();
+  /**
+   * The Queue of tasks that are pending execution.
+   */
+  private final Queue<ScheduledTask> pending = new ArrayDeque<>();
 
-	/**
-	 * The List of currently active tasks.
-	 */
-	private final List<ScheduledTask> active = new ArrayList<>();
+  /**
+   * The List of currently active tasks.
+   */
+  private final List<ScheduledTask> active = new ArrayList<>();
 
-	/**
-	 * Pulses the {@link Queue} of {@link ScheduledTask}s, removing those that are no longer running.
-	 */
-	public void pulse() {
-		CollectionUtil.pollAll(pending, active::add);
+  /**
+   * Pulses the {@link Queue} of {@link ScheduledTask}s, removing those that are no longer running.
+   */
+  public void pulse() {
+    CollectionUtil.pollAll(pending, active::add);
 
-		for (Iterator<ScheduledTask> iterator = active.iterator(); iterator.hasNext();) {
-			ScheduledTask task = iterator.next();
-			task.pulse();
+    for (Iterator<ScheduledTask> iterator = active.iterator(); iterator.hasNext(); ) {
+      ScheduledTask task = iterator.next();
+      task.pulse();
 
-			if (!task.isRunning()) {
-				iterator.remove();
-			}
-		}
-	}
+      if (!task.isRunning()) {
+        iterator.remove();
+      }
+    }
+  }
 
-	/**
-	 * Schedules a new task.
-	 *
-	 * @param task The task to schedule.
-	 * @return {@code true} if the task was added successfully.
-	 */
-	public boolean schedule(ScheduledTask task) {
-		return pending.add(task);
-	}
+  /**
+   * Schedules a new task.
+   *
+   * @param task The task to schedule.
+   * @return {@code true} if the task was added successfully.
+   */
+  public boolean schedule(ScheduledTask task) {
+    return pending.add(task);
+  }
 
 }

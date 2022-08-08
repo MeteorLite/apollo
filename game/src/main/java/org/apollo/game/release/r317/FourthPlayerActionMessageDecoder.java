@@ -14,11 +14,11 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class FourthPlayerActionMessageDecoder extends MessageDecoder<PlayerActionMessage> {
 
-	@Override
-	public PlayerActionMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		int index = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-		return new PlayerActionMessage(4, index);
-	}
+  @Override
+  public PlayerActionMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    int index = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    return new PlayerActionMessage(4, index);
+  }
 
 }

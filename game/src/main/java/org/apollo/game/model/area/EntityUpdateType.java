@@ -7,14 +7,14 @@ package org.apollo.game.model.area;
  */
 public enum EntityUpdateType {
 
-	/**
-	 * The add type, when an Entity has been added to a {@link Region}.
-	 */
-	ADD,
+  /**
+   * The add type, when an Entity has been added to a {@link Region}.
+   */
+  ADD,
 
-	/**
-	 * The remove type, when an Entity has been removed from a {@link Region}.
-	 */
-	REMOVE;
+  /**
+   * The remove type, when an Entity has been removed from a {@link Region}.
+   */
+  REMOVE;
 
 }

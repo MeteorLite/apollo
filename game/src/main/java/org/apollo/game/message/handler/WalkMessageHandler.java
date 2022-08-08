@@ -13,39 +13,39 @@ import org.apollo.game.model.entity.WalkingQueue;
  */
 public final class WalkMessageHandler extends MessageHandler<WalkMessage> {
 
-	/**
-	 * Creates the WalkMessageHandler.
-	 *
-	 * @param world The {@link World} the {@link WalkMessage} occurred in.
-	 */
-	public WalkMessageHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the WalkMessageHandler.
+   *
+   * @param world The {@link World} the {@link WalkMessage} occurred in.
+   */
+  public WalkMessageHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, WalkMessage message) {
-		WalkingQueue queue = player.getWalkingQueue();
+  @Override
+  public void handle(Player player, WalkMessage message) {
+    WalkingQueue queue = player.getWalkingQueue();
 
-		Position[] steps = message.getSteps();
-		for (int index = 0; index < steps.length; index++) {
-			Position step = steps[index];
-			if (index == 0) {
-				queue.addFirstStep(step);
-			} else {
-				queue.addStep(step);
-			}
-		}
+    Position[] steps = message.getSteps();
+    for (int index = 0; index < steps.length; index++) {
+      Position step = steps[index];
+      if (index == 0) {
+        queue.addFirstStep(step);
+      } else {
+        queue.addStep(step);
+      }
+    }
 
-		queue.setRunning(message.isRunning() || player.isRunning());
-		player.getInterfaceSet().close();
+    queue.setRunning(message.isRunning() || player.isRunning());
+    player.getInterfaceSet().close();
 
-		if (queue.size() > 0) {
-			player.stopAction();
-		}
+    if (queue.size() > 0) {
+      player.stopAction();
+    }
 
-		if (player.getInteractingMob() != null) {
-			player.resetInteractingMob();
-		}
-	}
+    if (player.getInteractingMob() != null) {
+      player.resetInteractingMob();
+    }
+  }
 
 }

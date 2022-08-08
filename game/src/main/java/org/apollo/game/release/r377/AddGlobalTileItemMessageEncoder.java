@@ -13,16 +13,17 @@ import org.apollo.net.release.MessageEncoder;
  *
  * @author Major
  */
-public final class AddGlobalTileItemMessageEncoder extends MessageEncoder<SendPublicTileItemMessage> {
+public final class AddGlobalTileItemMessageEncoder extends
+    MessageEncoder<SendPublicTileItemMessage> {
 
-	@Override
-	public GamePacket encode(SendPublicTileItemMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(106);
-		builder.put(DataType.BYTE, DataTransformation.ADD, message.getPositionOffset());
-		builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.getAmount());
-		builder.put(DataType.SHORT, DataTransformation.ADD, message.getId());
-		builder.put(DataType.SHORT, DataTransformation.ADD, message.getIndex());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(SendPublicTileItemMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(106);
+    builder.put(DataType.BYTE, DataTransformation.ADD, message.getPositionOffset());
+    builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.getAmount());
+    builder.put(DataType.SHORT, DataTransformation.ADD, message.getId());
+    builder.put(DataType.SHORT, DataTransformation.ADD, message.getIndex());
+    return builder.toGamePacket();
+  }
 
 }

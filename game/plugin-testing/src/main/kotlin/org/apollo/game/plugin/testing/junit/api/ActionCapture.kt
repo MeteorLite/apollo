@@ -1,10 +1,10 @@
 package org.apollo.game.plugin.testing.junit.api
 
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSuperclassOf
 import org.apollo.game.action.Action
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSuperclassOf
 
 class ActionCapture(val type: KClass<out Action<*>>) {
     private var action: Action<*>? = null
@@ -35,7 +35,8 @@ class ActionCapture(val type: KClass<out Action<*>>) {
                 it.pulse()
                 pulses++
 
-                val tickCallbacks = callbacks.filter { it.delay == ActionCaptureDelay.Ticks(pulses) }
+                val tickCallbacks =
+                    callbacks.filter { it.delay == ActionCaptureDelay.Ticks(pulses) }
                 tickCallbacks.forEach { it.invoke() }
 
                 callbacks.removeAll(tickCallbacks)

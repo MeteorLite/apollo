@@ -1,7 +1,5 @@
 package org.apollo.cache;
 
-import java.io.File;
-
 /**
  * A class which points to a file in the cache.
  *
@@ -9,58 +7,57 @@ import java.io.File;
  */
 public final class FileDescriptor {
 
-	/**
-	 * The file id.
-	 */
-	private final int file;
+  /**
+   * The file id.
+   */
+  private final int file;
 
-	/**
-	 * The file type.
-	 */
-	private final int type;
+  /**
+   * The file type.
+   */
+  private final int type;
 
-	/**
-	 * Creates the file descriptor.
-	 *
-	 * @param type The file type.
-	 * @param file The file id.
-	 */
-	public FileDescriptor(int type, int file) {
-		this.type = type;
-		this.file = file;
-	}
+  /**
+   * Creates the file descriptor.
+   *
+   * @param type The file type.
+   * @param file The file id.
+   */
+  public FileDescriptor(int type, int file) {
+    this.type = type;
+    this.file = file;
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof FileDescriptor) {
-			FileDescriptor other = (FileDescriptor) obj;
-			return type == other.type && file == other.file;
-		}
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof FileDescriptor other) {
+      return type == other.type && file == other.file;
+    }
 
-		return false;
-	}
+    return false;
+  }
 
-	/**
-	 * Gets the file id.
-	 *
-	 * @return The file id.
-	 */
-	public int getFile() {
-		return file;
-	}
+  /**
+   * Gets the file id.
+   *
+   * @return The file id.
+   */
+  public int getFile() {
+    return file;
+  }
 
-	/**
-	 * Gets the file type.
-	 *
-	 * @return The file type.
-	 */
-	public int getType() {
-		return type;
-	}
+  /**
+   * Gets the file type.
+   *
+   * @return The file type.
+   */
+  public int getType() {
+    return type;
+  }
 
-	@Override
-	public int hashCode() {
-		return file * FileSystemConstants.ARCHIVE_COUNT + type;
-	}
+  @Override
+  public int hashCode() {
+    return file * FileSystemConstants.ARCHIVE_COUNT + type;
+  }
 
 }

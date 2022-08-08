@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class RemoveIgnoreMessage extends Message {
 
-	/**
-	 * The username of the unignored player.
-	 */
-	private final String username;
+  /**
+   * The username of the unignored player.
+   */
+  private final String username;
 
-	/**
-	 * Creates a new unignore player message.
-	 *
-	 * @param username The unignored player's username.
-	 */
-	public RemoveIgnoreMessage(String username) {
-		this.username = username;
-	}
+  /**
+   * Creates a new unignore player message.
+   *
+   * @param username The unignored player's username.
+   */
+  public RemoveIgnoreMessage(String username) {
+    this.username = username;
+  }
 
-	/**
-	 * Gets the username of the unignored player.
-	 *
-	 * @return The username.
-	 */
-	public String getUsername() {
-		return username;
-	}
+  /**
+   * Gets the username of the unignored player.
+   *
+   * @return The username.
+   */
+  public String getUsername() {
+    return username;
+  }
 
 }

@@ -14,15 +14,15 @@ import org.apollo.util.NameUtil;
  */
 public final class ReportAbuseMessageDecoder extends MessageDecoder<ReportAbuseMessage> {
 
-	@Override
-	public ReportAbuseMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
+  @Override
+  public ReportAbuseMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
 
-		String name = NameUtil.decodeBase37(reader.getSigned(DataType.LONG));
-		int rule = (int) reader.getUnsigned(DataType.BYTE);
-		boolean mute = reader.getUnsigned(DataType.BYTE) == 1;
+    String name = NameUtil.decodeBase37(reader.getSigned(DataType.LONG));
+    int rule = (int) reader.getUnsigned(DataType.BYTE);
+    boolean mute = reader.getUnsigned(DataType.BYTE) == 1;
 
-		return new ReportAbuseMessage(name, rule, mute);
-	}
+    return new ReportAbuseMessage(name, rule, mute);
+  }
 
 }

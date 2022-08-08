@@ -11,21 +11,21 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public final class LoginEncoder extends MessageToByteEncoder<LoginResponse> {
 
-	/**
-	 * Creates the login encoder.
-	 */
-	public LoginEncoder() {
-		super(LoginResponse.class);
-	}
+  /**
+   * Creates the login encoder.
+   */
+  public LoginEncoder() {
+    super(LoginResponse.class);
+  }
 
-	@Override
-	protected void encode(ChannelHandlerContext ctx, LoginResponse response, ByteBuf out) {
-		out.writeByte(response.getStatus());
+  @Override
+  protected void encode(ChannelHandlerContext ctx, LoginResponse response, ByteBuf out) {
+    out.writeByte(response.getStatus());
 
-		if (response.getStatus() == LoginConstants.STATUS_OK) {
-			out.writeByte(response.getRights());
-			out.writeByte(response.isFlagged() ? 1 : 0);
-		}
-	}
+    if (response.getStatus() == LoginConstants.STATUS_OK) {
+      out.writeByte(response.getRights());
+      out.writeByte(response.isFlagged() ? 1 : 0);
+    }
+  }
 
 }

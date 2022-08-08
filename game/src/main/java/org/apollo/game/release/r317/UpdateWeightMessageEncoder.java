@@ -13,11 +13,11 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class UpdateWeightMessageEncoder extends MessageEncoder<UpdateWeightMessage> {
 
-	@Override
-	public GamePacket encode(UpdateWeightMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(240);
-		builder.put(DataType.SHORT, message.getWeight());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(UpdateWeightMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(240);
+    builder.put(DataType.SHORT, message.getWeight());
+    return builder.toGamePacket();
+  }
 
 }

@@ -6,11 +6,12 @@ package org.apollo.game.fs.decoder;
  * @author garyttierney
  */
 public class SynchronousDecoderException extends Exception {
-    public SynchronousDecoderException(String message) {
-        super(message);
-    }
 
-    public SynchronousDecoderException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public SynchronousDecoderException(String message) {
+    super(message);
+  }
+
+  public SynchronousDecoderException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

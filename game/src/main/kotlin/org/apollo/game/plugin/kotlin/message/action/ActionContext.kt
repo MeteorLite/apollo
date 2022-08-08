@@ -16,9 +16,9 @@ import org.apollo.net.message.Message
  * ```
  */
 fun <T : ActionContext, F : Message> KotlinPluginScript.on(
-    listenable: MessageListenable<F, T, ActionPredicateContext>,
-    option: String,
-    callback: T.() -> Unit
+        listenable: MessageListenable<F, T, ActionPredicateContext>,
+        option: String,
+        callback: T.() -> Unit
 ) {
     registerListener(listenable, ActionPredicateContext(option), callback)
 }
