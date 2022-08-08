@@ -10,89 +10,87 @@ import org.apollo.game.model.World;
  */
 public abstract class Entity {
 
-	/**
-	 * The Position of this Entity.
-	 */
-	protected Position position;
+  /**
+   * The World containing this Entity.
+   */
+  protected final World world;
+  /**
+   * The Position of this Entity.
+   */
+  protected Position position;
+  /**
+   * The EntityBounds for this Entity.
+   */
+  private EntityBounds bounds;
 
-	/**
-	 * The World containing this Entity.
-	 */
-	protected final World world;
+  /**
+   * Creates the Entity.
+   *
+   * @param world    The {@link World} containing the Entity.
+   * @param position The {@link Position} of the Entity.
+   */
+  public Entity(World world, Position position) {
+    this.world = world;
+    this.position = position;
+  }
 
-	/**
-	 * The EntityBounds for this Entity.
-	 */
-	private EntityBounds bounds;
+  @Override
+  public abstract boolean equals(Object obj);
 
-	/**
-	 * Creates the Entity.
-	 *
-	 * @param world The {@link World} containing the Entity.
-	 * @param position The {@link Position} of the Entity.
-	 */
-	public Entity(World world, Position position) {
-		this.world = world;
-		this.position = position;
-	}
+  /**
+   * Gets the {@link EntityBounds} for this Entity.
+   *
+   * @return The EntityBounds.
+   */
+  public EntityBounds getBounds() {
 
-	@Override
-	public abstract boolean equals(Object obj);
+    if (bounds == null) {
+      bounds = new EntityBounds(this);
+    }
 
-	/**
-	 * Gets the {@link EntityBounds} for this Entity.
-	 *
-	 * @return The EntityBounds.
-	 */
-	public EntityBounds getBounds() {
+    return bounds;
+  }
 
-		if(bounds == null) {
-			bounds = new EntityBounds(this);
-		}
+  /**
+   * Gets the {@link Position} of this Entity.
+   *
+   * @return The Position.
+   */
+  public final Position getPosition() {
+    return position;
+  }
 
-		return bounds;
-	}
+  /**
+   * Gets the {@link World} this Entity is in.
+   *
+   * @return The World.
+   */
+  public World getWorld() {
+    return world;
+  }
 
-	/**
-	 * Gets the {@link Position} of this Entity.
-	 *
-	 * @return The Position.
-	 */
-	public final Position getPosition() {
-		return position;
-	}
+  /**
+   * Gets the {@link EntityType} of this Entity.
+   *
+   * @return The EntityType.
+   */
+  public abstract EntityType getEntityType();
 
-	/**
-	 * Gets the {@link World} this Entity is in.
-	 *
-	 * @return The World.
-	 */
-	public World getWorld() {
-		return world;
-	}
+  /**
+   * Gets the length of this Entity.
+   *
+   * @return The length.
+   */
+  public abstract int getLength();
 
-	/**
-	 * Gets the {@link EntityType} of this Entity.
-	 *
-	 * @return The EntityType.
-	 */
-	public abstract EntityType getEntityType();
+  /**
+   * Gets the width of this Entity.
+   *
+   * @return The width.
+   */
+  public abstract int getWidth();
 
-	/**
-	 * Gets the length of this Entity.
-	 *
-	 * @return The length.
-	 */
-	public abstract int getLength();
-
-	/**
-	 * Gets the width of this Entity.
-	 *
-	 * @return The width.
-	 */
-	public abstract int getWidth();
-
-	@Override
-	public abstract int hashCode();
+  @Override
+  public abstract int hashCode();
 
 }

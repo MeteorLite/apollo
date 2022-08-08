@@ -14,11 +14,11 @@ import org.apollo.util.NameUtil;
  */
 public final class RemoveFriendMessageDecoder extends MessageDecoder<RemoveFriendMessage> {
 
-	@Override
-	public RemoveFriendMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		String username = NameUtil.decodeBase37(reader.getSigned(DataType.LONG));
-		return new RemoveFriendMessage(username);
-	}
+  @Override
+  public RemoveFriendMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    String username = NameUtil.decodeBase37(reader.getSigned(DataType.LONG));
+    return new RemoveFriendMessage(username);
+  }
 
 }

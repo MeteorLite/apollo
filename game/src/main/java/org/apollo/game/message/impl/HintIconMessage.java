@@ -9,92 +9,92 @@ import org.apollo.net.message.Message;
  */
 public abstract class HintIconMessage extends Message {
 
-	/**
-	 * The type of a HintIcon.
-	 */
-	public enum Type {
+  /**
+   * The Type of entity this HintIconMessage is directed at.
+   */
+  private final Type type;
 
-		/**
-		 * A HintIcon that hovers over an Npc.
-		 */
-		NPC(1),
+  /**
+   * Creates the HintIconMessage.
+   *
+   * @param type The {@link Type} of this HintIconMessage.
+   */
+  protected HintIconMessage(Type type) {
+    this.type = type;
+  }
 
-		/**
-		 * A HintIcon that hovers directly over a Position.
-		 */
-		CENTER(2),
+  /**
+   * Gets the type this HintIconMessage is directed at.
+   *
+   * @return The type.
+   */
+  public final Type getType() {
+    return type;
+  }
 
-		/**
-		 * A HintIcon that hovers west over a Position.
-		 */
-		WEST(3),
+  /**
+   * The type of a HintIcon.
+   */
+  public enum Type {
 
-		/**
-		 * A HintIcon that hovers east over a Position.
-		 */
-		EAST(4),
+    /**
+     * A HintIcon that hovers over an Npc.
+     */
+    NPC(1),
 
-		/**
-		 * A HintIcon that hovers south over a Position.
-		 */
-		SOUTH(5),
+    /**
+     * A HintIcon that hovers directly over a Position.
+     */
+    CENTER(2),
 
-		/**
-		 * A HintIcon that hovers north over a Position.
-		 */
-		NORTH(6),
+    /**
+     * A HintIcon that hovers west over a Position.
+     */
+    WEST(3),
 
-		/**
-		 * A HintIcon that hovers over a Player.
-		 */
-		PLAYER(10);
+    /**
+     * A HintIcon that hovers east over a Position.
+     */
+    EAST(4),
 
-		/**
-		 * The integer value of this type.
-		 */
-		private final int value;
+    /**
+     * A HintIcon that hovers south over a Position.
+     */
+    SOUTH(5),
 
-		/**
-		 * Creates the Type.
-		 *
-		 * @param value The value.
-		 */
-		private Type(int value) {
-			this.value = value;
-		}
+    /**
+     * A HintIcon that hovers north over a Position.
+     */
+    NORTH(6),
 
-		/**
-		 * Gets the value of this type.
-		 *
-		 * @return The value.
-		 */
-		public int getValue() {
-			return value;
-		}
+    /**
+     * A HintIcon that hovers over a Player.
+     */
+    PLAYER(10);
 
-	}
+    /**
+     * The integer value of this type.
+     */
+    private final int value;
 
-	/**
-	 * The Type of entity this HintIconMessage is directed at.
-	 */
-	private final Type type;
+    /**
+     * Creates the Type.
+     *
+     * @param value The value.
+     */
+    private Type(int value) {
+      this.value = value;
+    }
 
-	/**
-	 * Creates the HintIconMessage.
-	 *
-	 * @param type The {@link Type} of this HintIconMessage.
-	 */
-	protected HintIconMessage(Type type) {
-		this.type = type;
-	}
+    /**
+     * Gets the value of this type.
+     *
+     * @return The value.
+     */
+    public int getValue() {
+      return value;
+    }
 
-	/**
-	 * Gets the type this HintIconMessage is directed at.
-	 *
-	 * @return The type.
-	 */
-	public final Type getType() {
-		return type;
-	}
+  }
 
 }

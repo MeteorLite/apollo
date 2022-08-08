@@ -1,10 +1,5 @@
 package org.apollo.game.plugin.testing.junit.params
 
-import java.util.stream.Stream
-import kotlin.reflect.KCallable
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import org.apollo.cache.def.ItemDefinition
 import org.apollo.cache.def.NpcDefinition
 import org.apollo.cache.def.ObjectDefinition
@@ -16,6 +11,11 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.support.AnnotationConsumer
+import java.util.stream.Stream
+import kotlin.reflect.KCallable
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.declaredMemberProperties
 
 /**
  * An [ArgumentsProvider] for a definition of type `D`.
@@ -28,12 +28,14 @@ abstract class DefinitionsProvider<D : Any>(
 
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         val companion = context.requiredTestClass.kotlin.companionObject
-            ?: throw RuntimeException("${context.requiredTestMethod.name} is annotated with a DefinitionsProvider," +
-                " but does not contain a companion object to search for Definitions in."
+            ?: throw RuntimeException(
+                "${context.requiredTestMethod.name} is annotated with a DefinitionsProvider," +
+                        " but does not contain a companion object to search for Definitions in."
             )
 
         val companionInstance = companion.objectInstance!! // safe
-        val callables: List<KCallable<*>> = companion.declaredMemberFunctions + companion.declaredMemberProperties
+        val callables: List<KCallable<*>> =
+            companion.declaredMemberFunctions + companion.declaredMemberProperties
 
         val filtered = if (sourceNames.isEmpty()) {
             callables
@@ -58,7 +60,12 @@ abstract class DefinitionsProvider<D : Any>(
  * [@ItemDefinitionSource][ItemDefinitionSource].
  */
 object ItemDefinitionsProvider : DefinitionsProvider<ItemDefinition>(
-    { methods, companion -> findTestDefinitions<ItemDefinition, ItemDefinitions>(methods, companion) }
+    { methods, companion ->
+        findTestDefinitions<ItemDefinition, ItemDefinitions>(
+            methods,
+            companion
+        )
+    }
 ), AnnotationConsumer<ItemDefinitionSource> {
 
     override fun accept(source: ItemDefinitionSource) {
@@ -88,7 +95,12 @@ object NpcDefinitionsProvider : DefinitionsProvider<NpcDefinition>(
  * [@ObjectDefinitionSource][ObjectDefinitionSource].
  */
 object ObjectDefinitionsProvider : DefinitionsProvider<ObjectDefinition>(
-    { methods, companion -> findTestDefinitions<ObjectDefinition, ObjectDefinitions>(methods, companion) }
+    { methods, companion ->
+        findTestDefinitions<ObjectDefinition, ObjectDefinitions>(
+            methods,
+            companion
+        )
+    }
 ), AnnotationConsumer<ObjectDefinitionSource> {
 
     override fun accept(source: ObjectDefinitionSource) {

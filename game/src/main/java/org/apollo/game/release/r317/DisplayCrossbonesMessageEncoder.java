@@ -11,13 +11,14 @@ import org.apollo.net.release.MessageEncoder;
  *
  * @author Major
  */
-public final class DisplayCrossbonesMessageEncoder extends MessageEncoder<DisplayCrossbonesMessage> {
+public final class DisplayCrossbonesMessageEncoder extends
+    MessageEncoder<DisplayCrossbonesMessage> {
 
-	@Override
-	public GamePacket encode(DisplayCrossbonesMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(61);
-		builder.put(DataType.BYTE, message.isDisplayed() ? 1 : 0);
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(DisplayCrossbonesMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(61);
+    builder.put(DataType.BYTE, message.isDisplayed() ? 1 : 0);
+    return builder.toGamePacket();
+  }
 
 }

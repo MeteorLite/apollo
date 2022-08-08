@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class FlashingTabClickedMessage extends Message {
 
-	/**
-	 * The tab that was clicked.
-	 */
-	private final int tab;
+  /**
+   * The tab that was clicked.
+   */
+  private final int tab;
 
-	/**
-	 * Creates the FlashingTabClickedMessage.
-	 *
-	 * @param tab The tab that was clicked.
-	 */
-	public FlashingTabClickedMessage(int tab) {
-		this.tab = tab;
-	}
+  /**
+   * Creates the FlashingTabClickedMessage.
+   *
+   * @param tab The tab that was clicked.
+   */
+  public FlashingTabClickedMessage(int tab) {
+    this.tab = tab;
+  }
 
-	/**
-	 * Gets the index of the tab that was clicked.
-	 *
-	 * @return The tab index.
-	 */
-	public int getTab() {
-		return tab;
-	}
+  /**
+   * Gets the index of the tab that was clicked.
+   *
+   * @return The tab index.
+   */
+  public int getTab() {
+    return tab;
+  }
 
 }

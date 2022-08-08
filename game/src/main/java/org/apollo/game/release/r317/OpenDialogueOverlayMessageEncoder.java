@@ -13,13 +13,14 @@ import org.apollo.net.release.MessageEncoder;
  *
  * @author Major
  */
-public final class OpenDialogueOverlayMessageEncoder extends MessageEncoder<OpenDialogueOverlayMessage> {
+public final class OpenDialogueOverlayMessageEncoder extends
+    MessageEncoder<OpenDialogueOverlayMessage> {
 
-	@Override
-	public GamePacket encode(OpenDialogueOverlayMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(218);
-		builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.getInterfaceId());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(OpenDialogueOverlayMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(218);
+    builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.getInterfaceId());
+    return builder.toGamePacket();
+  }
 
 }

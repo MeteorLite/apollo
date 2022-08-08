@@ -11,9 +11,9 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class ClosedInterfaceMessageDecoder extends MessageDecoder<ClosedInterfaceMessage> {
 
-	@Override
-	public ClosedInterfaceMessage decode(GamePacket packet) {
-		return new ClosedInterfaceMessage();
-	}
+  @Override
+  public ClosedInterfaceMessage decode(GamePacket packet) {
+    return new ClosedInterfaceMessage();
+  }
 
 }

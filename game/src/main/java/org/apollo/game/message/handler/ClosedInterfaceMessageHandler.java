@@ -11,18 +11,18 @@ import org.apollo.game.model.entity.Player;
  */
 public final class ClosedInterfaceMessageHandler extends MessageHandler<ClosedInterfaceMessage> {
 
-	/**
-	 * Creates the ClosedInterfaceMessageHandler.
-	 *
-	 * @param world The {@link World} the {@link ClosedInterfaceMessage} occurred in.
-	 */
-	public ClosedInterfaceMessageHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the ClosedInterfaceMessageHandler.
+   *
+   * @param world The {@link World} the {@link ClosedInterfaceMessage} occurred in.
+   */
+  public ClosedInterfaceMessageHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, ClosedInterfaceMessage message) {
-		player.getInterfaceSet().interfaceClosed();
-	}
+  @Override
+  public void handle(Player player, ClosedInterfaceMessage message) {
+    player.getInterfaceSet().interfaceClosed();
+  }
 
 }

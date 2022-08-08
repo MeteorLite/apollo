@@ -15,45 +15,45 @@ import org.apollo.game.model.inv.SynchronizationInventoryListener;
  */
 public final class ItemOnItemVerificationHandler extends MessageHandler<ItemOnItemMessage> {
 
-	/**
-	 * Creates the ItemOnItemVerificationHandler.
-	 *
-	 * @param world The {@link World} the {@link ItemOnItemMessage} occurred in.
-	 */
-	public ItemOnItemVerificationHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the ItemOnItemVerificationHandler.
+   *
+   * @param world The {@link World} the {@link ItemOnItemMessage} occurred in.
+   */
+  public ItemOnItemVerificationHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, ItemOnItemMessage message) {
-		Inventory inventory;
+  @Override
+  public void handle(Player player, ItemOnItemMessage message) {
+    Inventory inventory;
 
-		switch (message.getInterfaceId()) {
-			case SynchronizationInventoryListener.INVENTORY_ID:
-			case BankConstants.SIDEBAR_INVENTORY_ID:
-				inventory = player.getInventory();
-				break;
-			case SynchronizationInventoryListener.EQUIPMENT_ID:
-				inventory = player.getEquipment();
-				break;
-			case BankConstants.BANK_INVENTORY_ID:
-				inventory = player.getBank();
-				break;
-			default:
-				message.terminate();
-				return;
-		}
+    switch (message.getInterfaceId()) {
+      case SynchronizationInventoryListener.INVENTORY_ID:
+      case BankConstants.SIDEBAR_INVENTORY_ID:
+        inventory = player.getInventory();
+        break;
+      case SynchronizationInventoryListener.EQUIPMENT_ID:
+        inventory = player.getEquipment();
+        break;
+      case BankConstants.BANK_INVENTORY_ID:
+        inventory = player.getBank();
+        break;
+      default:
+        message.terminate();
+        return;
+    }
 
-		int slot = message.getTargetSlot();
-		if (slot < 0 || slot >= inventory.capacity()) {
-			message.terminate();
-			return;
-		}
+    int slot = message.getTargetSlot();
+    if (slot < 0 || slot >= inventory.capacity()) {
+      message.terminate();
+      return;
+    }
 
-		Item item = inventory.get(slot);
-		if (item == null || item.getId() != message.getTargetId()) {
-			message.terminate();
-		}
-	}
+    Item item = inventory.get(slot);
+    if (item == null || item.getId() != message.getTargetId()) {
+      message.terminate();
+    }
+  }
 
 }

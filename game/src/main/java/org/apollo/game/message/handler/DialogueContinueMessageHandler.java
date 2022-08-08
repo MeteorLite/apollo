@@ -12,20 +12,20 @@ import org.apollo.game.model.inter.InterfaceType;
  */
 public final class DialogueContinueMessageHandler extends MessageHandler<DialogueContinueMessage> {
 
-	/**
-	 * Creates the DialogueContinueMessageHandler.
-	 *
-	 * @param world The {@link World} the {@link DialogueContinueMessage} occurred in.
-	 */
-	public DialogueContinueMessageHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the DialogueContinueMessageHandler.
+   *
+   * @param world The {@link World} the {@link DialogueContinueMessage} occurred in.
+   */
+  public DialogueContinueMessageHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, DialogueContinueMessage message) {
-		if (player.getInterfaceSet().contains(InterfaceType.DIALOGUE)) {
-			player.getInterfaceSet().continueRequested();
-		}
-	}
+  @Override
+  public void handle(Player player, DialogueContinueMessage message) {
+    if (player.getInterfaceSet().contains(InterfaceType.DIALOGUE)) {
+      player.getInterfaceSet().continueRequested();
+    }
+  }
 
 }

@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
  */
 @Deprecated("To be removed")
 class OldKotlinPlayerEventHandler<T : PlayerEvent>(val world: World, val type: KClass<T>) :
-    KotlinPlayerHandlerProxyTrait<T>, EventListener<T> {
+        KotlinPlayerHandlerProxyTrait<T>, EventListener<T> {
 
     override var callback: T.(Player) -> Unit = {}
     override var predicate: T.() -> Boolean = { true }

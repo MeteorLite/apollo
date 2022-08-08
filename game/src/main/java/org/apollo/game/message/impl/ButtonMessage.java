@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class ButtonMessage extends Message {
 
-	/**
-	 * The widget id.
-	 */
-	private final int widgetId;
+  /**
+   * The widget id.
+   */
+  private final int widgetId;
 
-	/**
-	 * Creates the button message.
-	 *
-	 * @param widgetId The widget id.
-	 */
-	public ButtonMessage(int widgetId) {
-		this.widgetId = widgetId;
-	}
+  /**
+   * Creates the button message.
+   *
+   * @param widgetId The widget id.
+   */
+  public ButtonMessage(int widgetId) {
+    this.widgetId = widgetId;
+  }
 
-	/**
-	 * Gets the widget id.
-	 *
-	 * @return The widget id.
-	 */
-	public int getWidgetId() {
-		return widgetId;
-	}
+  /**
+   * Gets the widget id.
+   *
+   * @return The widget id.
+   */
+  public int getWidgetId() {
+    return widgetId;
+  }
 
 }

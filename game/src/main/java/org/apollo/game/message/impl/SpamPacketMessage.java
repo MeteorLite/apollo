@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class SpamPacketMessage extends Message {
 
-	/**
-	 * Data sent by the spam packet.
-	 */
-	private final byte[] data;
+  /**
+   * Data sent by the spam packet.
+   */
+  private final byte[] data;
 
-	/**
-	 * Creates a new spam packet message.
-	 *
-	 * @param data The data sent.
-	 */
-	public SpamPacketMessage(byte[] data) {
-		this.data = data;
-	}
+  /**
+   * Creates a new spam packet message.
+   *
+   * @param data The data sent.
+   */
+  public SpamPacketMessage(byte[] data) {
+    this.data = data;
+  }
 
-	/**
-	 * Gets the data sent.
-	 *
-	 * @return The data.
-	 */
-	public byte[] getData() {
-		return data;
-	}
+  /**
+   * Gets the data sent.
+   *
+   * @return The data.
+   */
+  public byte[] getData() {
+    return data;
+  }
 
 }

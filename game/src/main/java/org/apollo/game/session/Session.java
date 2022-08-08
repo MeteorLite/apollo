@@ -10,40 +10,40 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public abstract class Session {
 
-	/**
-	 * The channel.
-	 */
-	protected final Channel channel;
+  /**
+   * The channel.
+   */
+  protected final Channel channel;
 
-	/**
-	 * Creates a session for the specified channel.
-	 *
-	 * @param channel The channel.
-	 */
-	public Session(Channel channel) {
-		this.channel = channel;
-	}
+  /**
+   * Creates a session for the specified channel.
+   *
+   * @param channel The channel.
+   */
+  public Session(Channel channel) {
+    this.channel = channel;
+  }
 
-	/**
-	 * Destroys this session.
-	 */
-	public abstract void destroy();
+  /**
+   * Destroys this session.
+   */
+  public abstract void destroy();
 
-	/**
-	 * Processes a message received from the channel.
-	 *
-	 * @param message The message.
-	 * @throws Exception If some error occurs.
-	 */
-	public abstract void messageReceived(Object message) throws Exception;
+  /**
+   * Processes a message received from the channel.
+   *
+   * @param message The message.
+   * @throws Exception If some error occurs.
+   */
+  public abstract void messageReceived(Object message) throws Exception;
 
-	/**
-	 * Gets the channel.
-	 *
-	 * @return The channel.
-	 */
-	protected final Channel getChannel() {
-		return channel;
-	}
+  /**
+   * Gets the channel.
+   *
+   * @return The channel.
+   */
+  protected final Channel getChannel() {
+    return channel;
+  }
 
 }

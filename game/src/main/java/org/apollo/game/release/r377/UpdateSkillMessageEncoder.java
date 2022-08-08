@@ -15,16 +15,16 @@ import org.apollo.net.release.MessageEncoder;
  */
 public final class UpdateSkillMessageEncoder extends MessageEncoder<UpdateSkillMessage> {
 
-	@Override
-	public GamePacket encode(UpdateSkillMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(49);
-		Skill skill = message.getSkill();
+  @Override
+  public GamePacket encode(UpdateSkillMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(49);
+    Skill skill = message.getSkill();
 
-		builder.put(DataType.BYTE, DataTransformation.NEGATE, message.getId());
-		builder.put(DataType.BYTE, skill.getCurrentLevel());
-		builder.put(DataType.INT, (int) skill.getExperience());
+    builder.put(DataType.BYTE, DataTransformation.NEGATE, message.getId());
+    builder.put(DataType.BYTE, skill.getCurrentLevel());
+    builder.put(DataType.INT, (int) skill.getExperience());
 
-		return builder.toGamePacket();
-	}
+    return builder.toGamePacket();
+  }
 
 }

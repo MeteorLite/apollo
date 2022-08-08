@@ -11,16 +11,17 @@ import org.apollo.net.release.MessageEncoder;
  *
  * @author Major
  */
-public final class SetWidgetVisibilityMessageEncoder extends MessageEncoder<SetWidgetVisibilityMessage> {
+public final class SetWidgetVisibilityMessageEncoder extends
+    MessageEncoder<SetWidgetVisibilityMessage> {
 
-	@Override
-	public GamePacket encode(SetWidgetVisibilityMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(171);
+  @Override
+  public GamePacket encode(SetWidgetVisibilityMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(171);
 
-		builder.put(DataType.BYTE, message.isVisible() ? 0 : 1);
-		builder.put(DataType.SHORT, message.getWidgetId());
+    builder.put(DataType.BYTE, message.isVisible() ? 0 : 1);
+    builder.put(DataType.SHORT, message.getWidgetId());
 
-		return builder.toGamePacket();
-	}
+    return builder.toGamePacket();
+  }
 
 }

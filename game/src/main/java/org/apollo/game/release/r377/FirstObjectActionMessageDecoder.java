@@ -16,15 +16,15 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class FirstObjectActionMessageDecoder extends MessageDecoder<ObjectActionMessage> {
 
-	@Override
-	public ObjectActionMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
+  @Override
+  public ObjectActionMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
 
-		int x = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
-		int y = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-		int id = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    int x = (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
+    int y = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    int id = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
 
-		return new ObjectActionMessage(1, id, new Position(x, y));
-	}
+    return new ObjectActionMessage(1, id, new Position(x, y));
+  }
 
 }

@@ -22,10 +22,10 @@ import org.apollo.game.plugin.kotlin.message.action.ActionContext
  * ```
  */
 fun <T : InteractiveObject> KotlinPluginScript.on(
-    listenable: ObjectAction.Companion,
-    option: String,
-    objects: List<T>,
-    callback: ObjectAction<T>.() -> Unit
+        listenable: ObjectAction.Companion,
+        option: String,
+        objects: List<T>,
+        callback: ObjectAction<T>.() -> Unit
 ) {
     @Suppress("UNCHECKED_CAST") (callback as ObjectAction<*>.() -> Unit)
     registerListener(listenable, ObjectActionPredicateContext(option, objects), callback)
@@ -42,9 +42,9 @@ fun <T : InteractiveObject> KotlinPluginScript.on(
  * ```
  */
 fun KotlinPluginScript.on(
-    listenable: ObjectAction.Companion,
-    option: String,
-    callback: ObjectAction<*>.() -> Unit
+        listenable: ObjectAction.Companion,
+        option: String,
+        callback: ObjectAction<*>.() -> Unit
 ) {
     registerListener(listenable, ObjectActionPredicateContext(option, emptyList()), callback)
 }
@@ -59,10 +59,10 @@ fun KotlinPluginScript.x() {
  * An interaction between a [Player] and an [interactive] [GameObject].
  */
 class ObjectAction<T : InteractiveObject?>( // TODO split into two classes, one with T and one without?
-    override val player: Player,
-    override val option: String,
-    val target: GameObject,
-    val interactive: T
+        override val player: Player,
+        override val option: String,
+        val target: GameObject,
+        val interactive: T
 ) : ActionContext {
 
     companion object : MessageListenable<ObjectActionMessage, ObjectAction<*>, ObjectActionPredicateContext<*>>() {
@@ -70,9 +70,9 @@ class ObjectAction<T : InteractiveObject?>( // TODO split into two classes, one 
         override val type = ObjectActionMessage::class
 
         override fun createHandler(
-            world: World,
-            predicateContext: ObjectActionPredicateContext<*>?,
-            callback: ObjectAction<*>.() -> Unit
+                world: World,
+                predicateContext: ObjectActionPredicateContext<*>?,
+                callback: ObjectAction<*>.() -> Unit
         ): MessageHandler<ObjectActionMessage> {
             return object : MessageHandler<ObjectActionMessage>(world) {
 
@@ -81,19 +81,21 @@ class ObjectAction<T : InteractiveObject?>( // TODO split into two classes, one 
                     val option = def.menuActions[message.option]
 
                     val target = world.regionRepository
-                        .fromPosition(message.position)
-                        .getEntities<GameObject>(message.position, EntityType.DYNAMIC_OBJECT, EntityType.STATIC_OBJECT)
-                        .find { it.definition == def }
-                        ?: return // Could happen if object was despawned this tick, before calling this handle function
+                            .fromPosition(message.position)
+                            .getEntities<GameObject>(message.position, EntityType.DYNAMIC_OBJECT, EntityType.STATIC_OBJECT)
+                            .find { it.definition == def }
+                            ?: return // Could happen if object was despawned this tick, before calling this handle function
 
                     val context = when { // Evaluation-order matters here.
                         predicateContext == null -> ObjectAction<InteractiveObject?>(player, option, target, null)
                         !predicateContext.option.equals(option, ignoreCase = true) -> return
                         predicateContext.objects.isEmpty() -> ObjectAction(player, option, target, null)
                         predicateContext.objects.any { it.instanceOf(target) } -> {
-                            val interactive = predicateContext.objects.find { it.instanceOf(target) } ?: return
+                            val interactive = predicateContext.objects.find { it.instanceOf(target) }
+                                    ?: return
                             ObjectAction(player, option, target, interactive)
                         }
+
                         else -> return
                     }
 

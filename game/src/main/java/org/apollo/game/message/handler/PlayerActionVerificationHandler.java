@@ -12,31 +12,32 @@ import org.apollo.game.model.entity.Player;
  */
 public final class PlayerActionVerificationHandler extends MessageHandler<PlayerActionMessage> {
 
-	/**
-	 * Creates the PlayerActionVerificationHandler.
-	 *
-	 * @param world The {@link World} the {@link PlayerActionMessage} occurred in.
-	 */
-	public PlayerActionVerificationHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the PlayerActionVerificationHandler.
+   *
+   * @param world The {@link World} the {@link PlayerActionMessage} occurred in.
+   */
+  public PlayerActionVerificationHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, PlayerActionMessage message) {
-		int index = message.getIndex();
-		MobRepository<Player> repository = world.getPlayerRepository();
+  @Override
+  public void handle(Player player, PlayerActionMessage message) {
+    int index = message.getIndex();
+    MobRepository<Player> repository = world.getPlayerRepository();
 
-		if (index < 0 || index >= repository.capacity()) {
-			message.terminate();
-			return;
-		}
+    if (index < 0 || index >= repository.capacity()) {
+      message.terminate();
+      return;
+    }
 
-		Player other = repository.get(index);
-		if (other == null || !player.getPosition().isWithinDistance(other.getPosition(), player.getViewingDistance() + 1)) {
-			// +1 in case it was decremented after the player clicked the action.
-			message.terminate();
-			return;
-		}
-	}
+    Player other = repository.get(index);
+    if (other == null || !player.getPosition()
+        .isWithinDistance(other.getPosition(), player.getViewingDistance() + 1)) {
+      // +1 in case it was decremented after the player clicked the action.
+      message.terminate();
+      return;
+    }
+  }
 
 }

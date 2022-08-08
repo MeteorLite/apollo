@@ -9,43 +9,43 @@ import org.apollo.net.message.Message;
  */
 public final class SetWidgetModelMessage extends Message {
 
-	/**
-	 * The model id.
-	 */
-	private final int model;
+  /**
+   * The model id.
+   */
+  private final int model;
 
-	/**
-	 * The interface id.
-	 */
-	private final int interfaceId;
+  /**
+   * The interface id.
+   */
+  private final int interfaceId;
 
-	/**
-	 * Creates a new SetWidgetModelMessage.
-	 *
-	 * @param interfaceId The interface id.
-	 * @param model The model id.
-	 */
-	public SetWidgetModelMessage(int interfaceId, int model) {
-		this.interfaceId = interfaceId;
-		this.model = model;
-	}
+  /**
+   * Creates a new SetWidgetModelMessage.
+   *
+   * @param interfaceId The interface id.
+   * @param model       The model id.
+   */
+  public SetWidgetModelMessage(int interfaceId, int model) {
+    this.interfaceId = interfaceId;
+    this.model = model;
+  }
 
-	/**
-	 * Gets the model id.
-	 *
-	 * @return The model id.
-	 */
-	public int getModel() {
-		return model;
-	}
+  /**
+   * Gets the model id.
+   *
+   * @return The model id.
+   */
+  public int getModel() {
+    return model;
+  }
 
-	/**
-	 * Gets the interface id.
-	 *
-	 * @return The interface id.
-	 */
-	public int getInterfaceId() {
-		return interfaceId;
-	}
+  /**
+   * Gets the interface id.
+   *
+   * @return The interface id.
+   */
+  public int getInterfaceId() {
+    return interfaceId;
+  }
 
 }

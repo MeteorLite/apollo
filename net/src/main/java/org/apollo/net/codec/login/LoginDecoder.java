@@ -1,16 +1,15 @@
 package org.apollo.net.codec.login;
 
+import com.google.common.net.InetAddresses;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.logging.Logger;
-
 import org.apollo.cache.FileSystemConstants;
 import org.apollo.net.NetworkConstants;
 import org.apollo.util.BufferUtil;
@@ -19,8 +18,6 @@ import org.apollo.util.security.IsaacRandom;
 import org.apollo.util.security.IsaacRandomPair;
 import org.apollo.util.security.PlayerCredentials;
 
-import com.google.common.net.InetAddresses;
-
 /**
  * A {@link StatefulFrameDecoder} which decodes the login request frames.
  *
@@ -28,204 +25,212 @@ import com.google.common.net.InetAddresses;
  */
 public final class LoginDecoder extends StatefulFrameDecoder<LoginDecoderState> {
 
-	/**
-	 * The logger for this class.
-	 */
-	private static final Logger logger = Logger.getLogger(LoginDecoder.class.getName());
+  /**
+   * The logger for this class.
+   */
+  private static final Logger logger = Logger.getLogger(LoginDecoder.class.getName());
 
-	/**
-	 * The secure random number generator.
-	 */
-	private static final SecureRandom RANDOM = new SecureRandom();
+  /**
+   * The secure random number generator.
+   */
+  private static final SecureRandom RANDOM = new SecureRandom();
 
-	/**
-	 * The login packet length.
-	 */
-	private int loginLength;
+  /**
+   * The login packet length.
+   */
+  private int loginLength;
 
-	/**
-	 * The reconnecting flag.
-	 */
-	private boolean reconnecting;
+  /**
+   * The reconnecting flag.
+   */
+  private boolean reconnecting;
 
-	/**
-	 * The server-side session key.
-	 */
-	private long serverSeed;
+  /**
+   * The server-side session key.
+   */
+  private long serverSeed;
 
-	/**
-	 * The username hash.
-	 */
-	private int usernameHash;
+  /**
+   * The username hash.
+   */
+  private int usernameHash;
 
-	/**
-	 * Creates the login decoder with the default initial state.
-	 */
-	public LoginDecoder() {
-		super(LoginDecoderState.LOGIN_HANDSHAKE);
-	}
+  /**
+   * Creates the login decoder with the default initial state.
+   */
+  public LoginDecoder() {
+    super(LoginDecoderState.LOGIN_HANDSHAKE);
+  }
 
-	@Override
-	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out, LoginDecoderState state) {
-		switch (state) {
-			case LOGIN_HANDSHAKE:
-				decodeHandshake(ctx, in, out);
-				break;
-			case LOGIN_HEADER:
-				decodeHeader(ctx, in, out);
-				break;
-			case LOGIN_PAYLOAD:
-				decodePayload(ctx, in, out);
-				break;
-			default:
-				throw new IllegalStateException("Invalid login decoder state: " + state);
-		}
-	}
+  @Override
+  protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out,
+      LoginDecoderState state) {
+    switch (state) {
+      case LOGIN_HANDSHAKE:
+        decodeHandshake(ctx, in, out);
+        break;
+      case LOGIN_HEADER:
+        decodeHeader(ctx, in, out);
+        break;
+      case LOGIN_PAYLOAD:
+        decodePayload(ctx, in, out);
+        break;
+      default:
+        throw new IllegalStateException("Invalid login decoder state: " + state);
+    }
+  }
 
-	/**
-	 * Decodes in the handshake state.
-	 *
-	 * @param ctx The channel handler context.
-	 * @param buffer The buffer.
-	 * @param out The {@link List} of objects to pass forward through the pipeline.
-	 */
-	private void decodeHandshake(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) {
-		if (buffer.isReadable()) {
-			usernameHash = buffer.readUnsignedByte();
-			serverSeed = RANDOM.nextLong();
+  /**
+   * Decodes in the handshake state.
+   *
+   * @param ctx    The channel handler context.
+   * @param buffer The buffer.
+   * @param out    The {@link List} of objects to pass forward through the pipeline.
+   */
+  private void decodeHandshake(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) {
+    if (buffer.isReadable()) {
+      usernameHash = buffer.readUnsignedByte();
+      serverSeed = RANDOM.nextLong();
 
-			ByteBuf response = ctx.alloc().buffer(17);
-			response.writeByte(LoginConstants.STATUS_EXCHANGE_DATA);
-			response.writeLong(0);
-			response.writeLong(serverSeed);
-			ctx.channel().write(response);
+      ByteBuf response = ctx.alloc().buffer(17);
+      response.writeByte(LoginConstants.STATUS_EXCHANGE_DATA);
+      response.writeLong(0);
+      response.writeLong(serverSeed);
+      ctx.channel().write(response);
 
-			setState(LoginDecoderState.LOGIN_HEADER);
-		}
-	}
+      setState(LoginDecoderState.LOGIN_HEADER);
+    }
+  }
 
-	/**
-	 * Decodes in the header state.
-	 *
-	 * @param ctx The channel handler context.
-	 * @param buffer The buffer.
-	 * @param out The {@link List} of objects to pass forward through the pipeline.
-	 */
-	private void decodeHeader(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) {
-		if (buffer.readableBytes() >= 2) {
-			int type = buffer.readUnsignedByte();
+  /**
+   * Decodes in the header state.
+   *
+   * @param ctx    The channel handler context.
+   * @param buffer The buffer.
+   * @param out    The {@link List} of objects to pass forward through the pipeline.
+   */
+  private void decodeHeader(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) {
+    if (buffer.readableBytes() >= 2) {
+      int type = buffer.readUnsignedByte();
 
-			if (type != LoginConstants.TYPE_STANDARD && type != LoginConstants.TYPE_RECONNECTION) {
-				logger.fine("Failed to decode login header.");
-				writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
-				return;
-			}
+      if (type != LoginConstants.TYPE_STANDARD && type != LoginConstants.TYPE_RECONNECTION) {
+        logger.fine("Failed to decode login header.");
+        writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
+        return;
+      }
 
-			reconnecting = type == LoginConstants.TYPE_RECONNECTION;
-			loginLength = buffer.readUnsignedByte();
+      reconnecting = type == LoginConstants.TYPE_RECONNECTION;
+      loginLength = buffer.readUnsignedByte();
 
-			setState(LoginDecoderState.LOGIN_PAYLOAD);
-		}
-	}
+      setState(LoginDecoderState.LOGIN_PAYLOAD);
+    }
+  }
 
-	/**
-	 * Decodes in the payload state.
-	 *
-	 * @param ctx The channel handler context.
-	 * @param buffer The buffer.
-	 * @param out The {@link List} of objects to pass forward through the pipeline.
-	 */
-	private void decodePayload(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) {
-		if (buffer.readableBytes() >= loginLength) {
-			ByteBuf payload = buffer.readBytes(loginLength);
-			int version = 255 - payload.readUnsignedByte();
+  /**
+   * Decodes in the payload state.
+   *
+   * @param ctx    The channel handler context.
+   * @param buffer The buffer.
+   * @param out    The {@link List} of objects to pass forward through the pipeline.
+   */
+  private void decodePayload(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) {
+    if (buffer.readableBytes() >= loginLength) {
+      ByteBuf payload = buffer.readBytes(loginLength);
+      int version = 255 - payload.readUnsignedByte();
 
-			int release = payload.readUnsignedShort();
+      int release = payload.readUnsignedShort();
 
-			int memoryStatus = payload.readUnsignedByte();
-			if (memoryStatus != 0 && memoryStatus != 1) {
-				logger.fine("Login memoryStatus (" + memoryStatus + ") not in expected range of [0, 1].");
-				writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
-				return;
-			}
+      int memoryStatus = payload.readUnsignedByte();
+      if (memoryStatus != 0 && memoryStatus != 1) {
+        logger.fine("Login memoryStatus (" + memoryStatus + ") not in expected range of [0, 1].");
+        writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
+        return;
+      }
 
-			boolean lowMemory = memoryStatus == 1;
+      boolean lowMemory = memoryStatus == 1;
 
-			int[] crcs = new int[FileSystemConstants.ARCHIVE_COUNT];
-			for (int index = 0; index < 9; index++) {
-				crcs[index] = payload.readInt();
-			}
+      int[] crcs = new int[FileSystemConstants.ARCHIVE_COUNT];
+      for (int index = 0; index < 9; index++) {
+        crcs[index] = payload.readInt();
+      }
 
-			int length = payload.readUnsignedByte();
-			if (length != loginLength - 41) {
-				logger.fine("Login packet unexpected length (" + length + ")");
-				writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
-				return;
-			}
+      int length = payload.readUnsignedByte();
+      if (length != loginLength - 41) {
+        logger.fine("Login packet unexpected length (" + length + ")");
+        writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
+        return;
+      }
 
-			ByteBuf secure = payload.readBytes(length);
+      ByteBuf secure = payload.readBytes(length);
 
-			BigInteger value = new BigInteger(secure.array());
-			value = value.modPow(NetworkConstants.RSA_EXPONENT, NetworkConstants.RSA_MODULUS);
-			secure = Unpooled.wrappedBuffer(value.toByteArray());
+      //netty >= 4.0.37 doesn't allow the old way because it's technically not safe.
+      byte[] handshake = new byte[secure.readableBytes()];
+      secure.readBytes(handshake);
 
-			int id = secure.readUnsignedByte();
-			if (id != 10) {
-				logger.fine("Unable to read id from secure payload.");
-				writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
-				return;
-			}
+      BigInteger value = new BigInteger(handshake);
+      value = value.modPow(NetworkConstants.RSA_EXPONENT, NetworkConstants.RSA_MODULUS);
+      secure = Unpooled.wrappedBuffer(value.toByteArray());
 
-			long clientSeed = secure.readLong();
-			long reportedSeed = secure.readLong();
-			if (reportedSeed != serverSeed) {
-				logger.fine("Reported seed differed from server seed.");
-				writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
-				return;
-			}
+      int id = secure.readUnsignedByte();
+      if (id != 10) {
+        logger.fine("Unable to read id from secure payload.");
+        writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
+        return;
+      }
 
-			int uid = secure.readInt();
-			String username = BufferUtil.readString(secure);
-			String password = BufferUtil.readString(secure);
-			InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-			String hostAddress = InetAddresses.toAddrString(socketAddress.getAddress());
+      long clientSeed = secure.readLong();
+      long reportedSeed = secure.readLong();
+      if (reportedSeed != serverSeed) {
+        logger.fine("Reported seed differed from server seed.");
+        writeResponseCode(ctx, LoginConstants.STATUS_LOGIN_SERVER_REJECTED_SESSION);
+        return;
+      }
 
-			if (password.length() < 6 || password.length() > 20 || username.isEmpty() || username.length() > 12) {
-				logger.fine("Username ('" + username + "') or password did not pass validation.");
-				writeResponseCode(ctx, LoginConstants.STATUS_INVALID_CREDENTIALS);
-				return;
-			}
+      int uid = secure.readInt();
+      String username = BufferUtil.readString(secure);
+      String password = BufferUtil.readString(secure);
+      InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+      String hostAddress = InetAddresses.toAddrString(socketAddress.getAddress());
 
-			int[] seed = new int[4];
-			seed[0] = (int) (clientSeed >> 32);
-			seed[1] = (int) clientSeed;
-			seed[2] = (int) (serverSeed >> 32);
-			seed[3] = (int) serverSeed;
+      if (password.length() < 6 || password.length() > 20 || username.isEmpty()
+          || username.length() > 12) {
+        logger.fine("Username ('" + username + "') or password did not pass validation.");
+        writeResponseCode(ctx, LoginConstants.STATUS_INVALID_CREDENTIALS);
+        return;
+      }
 
-			IsaacRandom decodingRandom = new IsaacRandom(seed);
-			for (int index = 0; index < seed.length; index++) {
-				seed[index] += 50;
-			}
+      int[] seed = new int[4];
+      seed[0] = (int) (clientSeed >> 32);
+      seed[1] = (int) clientSeed;
+      seed[2] = (int) (serverSeed >> 32);
+      seed[3] = (int) serverSeed;
 
-			IsaacRandom encodingRandom = new IsaacRandom(seed);
+      IsaacRandom decodingRandom = new IsaacRandom(seed);
+      for (int index = 0; index < seed.length; index++) {
+        seed[index] += 50;
+      }
 
-			PlayerCredentials credentials = new PlayerCredentials(username, password, usernameHash, uid, hostAddress);
-			IsaacRandomPair randomPair = new IsaacRandomPair(encodingRandom, decodingRandom);
+      IsaacRandom encodingRandom = new IsaacRandom(seed);
 
-			out.add(new LoginRequest(credentials, randomPair, reconnecting, lowMemory, release, crcs, version));
-		}
-	}
+      PlayerCredentials credentials = new PlayerCredentials(username, password, usernameHash, uid,
+          hostAddress);
+      IsaacRandomPair randomPair = new IsaacRandomPair(encodingRandom, decodingRandom);
 
-	/**
-	 * Writes a response code to the client and closes the current channel.
-	 *
-	 * @param ctx The context of the channel handler.
-	 * @param response The response code to write.
-	 */
-	private void writeResponseCode(ChannelHandlerContext ctx, int response) {
-		ByteBuf buffer = ctx.alloc().buffer(Byte.BYTES);
-		buffer.writeByte(response);
-		ctx.writeAndFlush(buffer).addListener(ChannelFutureListener.CLOSE);
-	}
+      out.add(new LoginRequest(credentials, randomPair, reconnecting, lowMemory, release, crcs,
+          version));
+    }
+  }
+
+  /**
+   * Writes a response code to the client and closes the current channel.
+   *
+   * @param ctx      The context of the channel handler.
+   * @param response The response code to write.
+   */
+  private void writeResponseCode(ChannelHandlerContext ctx, int response) {
+    ByteBuf buffer = ctx.alloc().buffer(Byte.BYTES);
+    buffer.writeByte(response);
+    ctx.writeAndFlush(buffer).addListener(ChannelFutureListener.CLOSE);
+  }
 
 }

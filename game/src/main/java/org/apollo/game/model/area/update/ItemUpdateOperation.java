@@ -14,25 +14,25 @@ import org.apollo.game.model.entity.GroundItem;
  */
 public final class ItemUpdateOperation extends UpdateOperation<GroundItem> {
 
-	/**
-	 * Creates the ItemUpdateOperation.
-	 *
-	 * @param region The {@link Region} the type occurred in. Must not be {@code null}.
-	 * @param type The {@link EntityUpdateType}. Must not be {@code null}.
-	 * @param item The modified {@link GroundItem}. Must not be {@code null}.
-	 */
-	public ItemUpdateOperation(Region region, EntityUpdateType type, GroundItem item) {
-		super(region, type, item);
-	}
+  /**
+   * Creates the ItemUpdateOperation.
+   *
+   * @param region The {@link Region} the type occurred in. Must not be {@code null}.
+   * @param type   The {@link EntityUpdateType}. Must not be {@code null}.
+   * @param item   The modified {@link GroundItem}. Must not be {@code null}.
+   */
+  public ItemUpdateOperation(Region region, EntityUpdateType type, GroundItem item) {
+    super(region, type, item);
+  }
 
-	@Override
-	protected RegionUpdateMessage add(int offset) {
-		return new SendPublicTileItemMessage(entity.getItem(), entity.getOwnerIndex(), offset);
-	}
+  @Override
+  protected RegionUpdateMessage add(int offset) {
+    return new SendPublicTileItemMessage(entity.getItem(), entity.getOwnerIndex(), offset);
+  }
 
-	@Override
-	protected RegionUpdateMessage remove(int offset) {
-		return new RemoveTileItemMessage(entity.getItem(), offset);
-	}
+  @Override
+  protected RegionUpdateMessage remove(int offset) {
+    return new RemoveTileItemMessage(entity.getItem(), offset);
+  }
 
 }

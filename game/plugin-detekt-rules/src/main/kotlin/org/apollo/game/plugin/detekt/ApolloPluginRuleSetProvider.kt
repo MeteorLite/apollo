@@ -9,8 +9,10 @@ class ApolloPluginRuleSetProvider : RuleSetProvider {
     override val ruleSetId = "apollo-plugin"
 
     override fun instance(config: Config): RuleSet {
-        return RuleSet(ruleSetId, listOf(
-            DeclarationInScriptRule()
-        ))
+        return RuleSet(
+            ruleSetId, listOf(
+                DeclarationInScriptRule()
+            )
+        )
     }
 }

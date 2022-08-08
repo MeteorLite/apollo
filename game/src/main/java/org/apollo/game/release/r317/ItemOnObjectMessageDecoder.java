@@ -15,18 +15,18 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class ItemOnObjectMessageDecoder extends MessageDecoder<ItemOnObjectMessage> {
 
-	@Override
-	public ItemOnObjectMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
+  @Override
+  public ItemOnObjectMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
 
-		int interfaceId = (int) reader.getUnsigned(DataType.SHORT);
-		int objectId = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-		int y = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
-		int slot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-		int x = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
-		int itemId = (int) reader.getUnsigned(DataType.SHORT);
+    int interfaceId = (int) reader.getUnsigned(DataType.SHORT);
+    int objectId = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    int y = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
+    int slot = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    int x = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
+    int itemId = (int) reader.getUnsigned(DataType.SHORT);
 
-		return new ItemOnObjectMessage(interfaceId, itemId, slot, objectId, x, y);
-	}
+    return new ItemOnObjectMessage(interfaceId, itemId, slot, objectId, x, y);
+  }
 
 }

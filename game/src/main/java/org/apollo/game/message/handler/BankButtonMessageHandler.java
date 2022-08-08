@@ -11,32 +11,31 @@ import org.apollo.game.model.entity.Player;
  */
 public final class BankButtonMessageHandler extends MessageHandler<ButtonMessage> {
 
-	/**
-	 * Creates the BankButtonMessageHandler.
-	 *
-	 * @param world The {@link World} the {@link ButtonMessage} occurred in.
-	 */
-	public BankButtonMessageHandler(World world) {
-		super(world);
-	}
+  /**
+   * The withdraw as item button id.
+   */
+  private static final int WITHDRAW_AS_ITEM = 5387;
+  /**
+   * The withdraw as note button id.
+   */
+  private static final int WITHDRAW_AS_NOTE = 5386;
 
-	/**
-	 * The withdraw as item button id.
-	 */
-	private static final int WITHDRAW_AS_ITEM = 5387;
+  /**
+   * Creates the BankButtonMessageHandler.
+   *
+   * @param world The {@link World} the {@link ButtonMessage} occurred in.
+   */
+  public BankButtonMessageHandler(World world) {
+    super(world);
+  }
 
-	/**
-	 * The withdraw as note button id.
-	 */
-	private static final int WITHDRAW_AS_NOTE = 5386;
-
-	@Override
-	public void handle(Player player, ButtonMessage message) {
-		if (message.getWidgetId() == WITHDRAW_AS_ITEM) {
-			player.setWithdrawingNotes(false);
-		} else if (message.getWidgetId() == WITHDRAW_AS_NOTE) {
-			player.setWithdrawingNotes(true);
-		}
-	}
+  @Override
+  public void handle(Player player, ButtonMessage message) {
+    if (message.getWidgetId() == WITHDRAW_AS_ITEM) {
+      player.setWithdrawingNotes(false);
+    } else if (message.getWidgetId() == WITHDRAW_AS_NOTE) {
+      player.setWithdrawingNotes(true);
+    }
+  }
 
 }

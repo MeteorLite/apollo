@@ -1,9 +1,12 @@
 package org.apollo.game.model;
 
-import java.util.*;
-import java.util.logging.Logger;
-
 import com.google.common.base.Preconditions;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.logging.Logger;
 import org.apollo.Service;
 import org.apollo.cache.IndexedFileSystem;
 import org.apollo.cache.decoder.ItemDefinitionDecoder;
@@ -34,377 +37,370 @@ import org.apollo.game.scheduling.impl.NpcMovementTask;
 import org.apollo.util.NameUtil;
 
 /**
- * The world class is a singleton which contains objects like the {@link MobRepository} for players and NPCs. It should
- * only contain things relevant to the in-game world and not classes which deal with I/O and such (these may be better
- * off inside some custom {@link Service} or other code, however, the circumstances are rare).
+ * The world class is a singleton which contains objects like the {@link MobRepository} for players
+ * and NPCs. It should only contain things relevant to the in-game world and not classes which deal
+ * with I/O and such (these may be better off inside some custom {@link Service} or other code,
+ * however, the circumstances are rare).
  *
  * @author Graham
  */
 public final class World {
 
-	/**
-	 * Represents the different status codes for registering a player.
-	 *
-	 * @author Graham
-	 */
-	public enum RegistrationStatus {
+  /**
+   * The logger for this class.
+   */
+  private static final Logger logger = Logger.getLogger(World.class.getName());
+  /**
+   * The command dispatcher.
+   */
+  private final CommandDispatcher commandDispatcher = new CommandDispatcher();
+  /**
+   * The EventListenerChainSet for this World.
+   */
+  private final EventListenerChainSet events = new EventListenerChainSet();
+  /**
+   * The {@link MobRepository} of {@link Npc}s.
+   */
+  private final MobRepository<Npc> npcRepository = new MobRepository<>(WorldConstants.MAXIMUM_NPCS);
+  /**
+   * The Queue of Npcs that have yet to be removed from the repository.
+   */
+  private final Queue<Npc> oldNpcs = new ArrayDeque<>();
+  /**
+   * The {@link MobRepository} of {@link Player}s.
+   */
+  private final MobRepository<Player> playerRepository = new MobRepository<>(
+      WorldConstants.MAXIMUM_PLAYERS);
+  /**
+   * A {@link Map} of player usernames and the player objects.
+   */
+  private final Map<Long, Player> players = new HashMap<>();
+  /**
+   * The Queue of Npcs that have yet to be added to the repository.
+   */
+  private final Queue<Npc> queuedNpcs = new ArrayDeque<>();
+  /**
+   * This world's {@link RegionRepository}.
+   */
+  private final RegionRepository regions = RegionRepository.immutable();
+  /**
+   * This world's {@link CollisionManager}.
+   */
+  private final CollisionManager collisionManager = new CollisionManager(regions);
+  /**
+   * The scheduler.
+   */
+  private final Scheduler scheduler = new Scheduler();
+  /**
+   * The ScheduledTask that moves Npcs.
+   */
+  private NpcMovementTask npcMovement;
+  /**
+   * The {@link PluginManager}.
+   */
+  private PluginManager pluginManager;
+  /**
+   * The release number (i.e. version) of this world.
+   */
+  private int releaseNumber;
 
-		/**
-		 * Indicates that the player is already online.
-		 */
-		ALREADY_ONLINE,
+  /**
+   * Gets the collision manager.
+   *
+   * @return The collision manager
+   */
+  public CollisionManager getCollisionManager() {
+    return collisionManager;
+  }
 
-		/**
-		 * Indicates that the player was registered successfully.
-		 */
-		OK,
+  /**
+   * Gets the command dispatcher.
+   *
+   * @return The command dispatcher.
+   */
+  public CommandDispatcher getCommandDispatcher() {
+    return commandDispatcher;
+  }
 
-		/**
-		 * Indicates the world is full.
-		 */
-		WORLD_FULL;
+  /**
+   * Gets the npc repository.
+   *
+   * @return The npc repository.
+   */
+  public MobRepository<Npc> getNpcRepository() {
+    return npcRepository;
+  }
 
-	}
+  /**
+   * Gets the {@link Player} with the specified username. Note that this will return {@code null} if
+   * the player is offline.
+   *
+   * @param username The username.
+   * @return The player.
+   */
+  public Player getPlayer(String username) {
+    return players.get(NameUtil.encodeBase37(username));
+  }
 
-	/**
-	 * The logger for this class.
-	 */
-	private static final Logger logger = Logger.getLogger(World.class.getName());
+  /**
+   * Gets the player repository.
+   *
+   * @return The player repository.
+   */
+  public MobRepository<Player> getPlayerRepository() {
+    return playerRepository;
+  }
 
-	/**
-	 * The command dispatcher.
-	 */
-	private final CommandDispatcher commandDispatcher = new CommandDispatcher();
+  /**
+   * Gets the plugin manager.
+   *
+   * @return The plugin manager.
+   */
+  public PluginManager getPluginManager() {
+    return pluginManager;
+  }
 
-	/**
-	 * The EventListenerChainSet for this World.
-	 */
-	private final EventListenerChainSet events = new EventListenerChainSet();
+  /**
+   * Gets this world's {@link RegionRepository}.
+   *
+   * @return The RegionRepository.
+   */
+  public RegionRepository getRegionRepository() {
+    return regions;
+  }
 
-	/**
-	 * The {@link MobRepository} of {@link Npc}s.
-	 */
-	private final MobRepository<Npc> npcRepository = new MobRepository<>(WorldConstants.MAXIMUM_NPCS);
+  /**
+   * Gets the release number of this world.
+   *
+   * @return The release number.
+   */
+  public int getReleaseNumber() {
+    return releaseNumber;
+  }
 
-	/**
-	 * The Queue of Npcs that have yet to be removed from the repository.
-	 */
-	private final Queue<Npc> oldNpcs = new ArrayDeque<>();
+  /**
+   * Initialises the world by loading definitions from the specified file system.
+   *
+   * @param release The release number.
+   * @param fs      The file system.
+   * @param manager The plugin manager. TODO move this.
+   * @throws Exception If there was a failure when loading plugins.
+   */
+  public void init(int release, IndexedFileSystem fs, PluginManager manager) throws Exception {
+    releaseNumber = release;
 
-	/**
-	 * The {@link MobRepository} of {@link Player}s.
-	 */
-	private final MobRepository<Player> playerRepository = new MobRepository<>(WorldConstants.MAXIMUM_PLAYERS);
+    SynchronousDecoder firstStageDecoder = new SynchronousDecoder(
+        new NpcDefinitionDecoder(fs),
+        new ItemDefinitionDecoder(fs),
+        new ObjectDefinitionDecoder(fs),
+        new MapIndexDecoder(fs),
+        EquipmentDefinitionParser.fromFile("data/equipment-" + release + "" + ".dat")
+    );
 
-	/**
-	 * A {@link Map} of player usernames and the player objects.
-	 */
-	private final Map<Long, Player> players = new HashMap<>();
+    firstStageDecoder.block();
 
-	/**
-	 * The Queue of Npcs that have yet to be added to the repository.
-	 */
-	private final Queue<Npc> queuedNpcs = new ArrayDeque<>();
+    SynchronousDecoder secondStageDecoder = new SynchronousDecoder(
+        new WorldObjectsDecoder(fs, this, regions),
+        new WorldMapDecoder(fs, collisionManager)
+    );
 
-	/**
-	 * This world's {@link RegionRepository}.
-	 */
-	private final RegionRepository regions = RegionRepository.immutable();
+    secondStageDecoder.block();
 
-	/**
-	 * This world's {@link CollisionManager}.
-	 */
-	private final CollisionManager collisionManager = new CollisionManager(regions);
+    // Build collision matrices for the first time
+    collisionManager.build(false);
+    regions.addRegionListener(new CollisionUpdateListener(collisionManager));
 
-	/**
-	 * The scheduler.
-	 */
-	private final Scheduler scheduler = new Scheduler();
+    npcMovement = new NpcMovementTask(
+        collisionManager); // Must be exactly here because of ordering issues.
+    scheduler.schedule(npcMovement);
 
-	/**
-	 * The ScheduledTask that moves Npcs.
-	 */
-	private NpcMovementTask npcMovement;
+    manager.start();
+    commandDispatcher.init(manager.getAuthors());
+    pluginManager = manager;
+  }
 
-	/**
-	 * The {@link PluginManager}.
-	 */
-	private PluginManager pluginManager;
+  /**
+   * Checks if the {@link Player} with the specified name is online.
+   *
+   * @param username The name.
+   * @return {@code true} if the player is online, otherwise {@code false}.
+   */
+  public boolean isPlayerOnline(String username) {
+    return players.get(NameUtil.encodeBase37(username)) != null;
+  }
 
-	/**
-	 * The release number (i.e. version) of this world.
-	 */
-	private int releaseNumber;
+  /**
+   * Adds an {@link EventListener}, listening for an {@link Event} of the specified type.
+   *
+   * @param type     The type of the Event.
+   * @param listener The EventListener.
+   */
+  public <E extends Event> void listenFor(Class<E> type, EventListener<E> listener) {
+    events.putListener(type, listener);
+  }
 
-	/**
-	 * Gets the collision manager.
-	 *
-	 * @return The collision manager
-	 */
-	public CollisionManager getCollisionManager() { return collisionManager; }
+  /**
+   * Pulses this World.
+   */
+  public void pulse() {
+    unregisterNpcs();
+    registerNpcs();
+    scheduler.pulse();
+  }
 
-	/**
-	 * Gets the command dispatcher.
-	 *
-	 * @return The command dispatcher.
-	 */
-	public CommandDispatcher getCommandDispatcher() {
-		return commandDispatcher;
-	}
+  /**
+   * Registers the specified {@link Npc}.
+   *
+   * @param npc The Npc.
+   */
+  public void register(Npc npc) {
+    queuedNpcs.add(npc);
+  }
 
-	/**
-	 * Gets the npc repository.
-	 *
-	 * @return The npc repository.
-	 */
-	public MobRepository<Npc> getNpcRepository() {
-		return npcRepository;
-	}
+  /**
+   * Registers the specified {@link Player}.
+   *
+   * @param player The Player.
+   */
+  public void register(Player player) {
+    String username = player.getUsername();
 
-	/**
-	 * Gets the {@link Player} with the specified username. Note that this will
-	 * return {@code null} if the player is offline.
-	 *
-	 * @param username The username.
-	 * @return The player.
-	 */
-	public Player getPlayer(String username) {
-		return players.get(NameUtil.encodeBase37(username));
-	}
+    playerRepository.add(player);
+    players.put(NameUtil.encodeBase37(username), player);
 
-	/**
-	 * Gets the player repository.
-	 *
-	 * @return The player repository.
-	 */
-	public MobRepository<Player> getPlayerRepository() {
-		return playerRepository;
-	}
+    logger.finest("Registered player: " + player + " [count=" + playerRepository.size() + "]");
+  }
 
-	/**
-	 * Gets the plugin manager.
-	 *
-	 * @return The plugin manager.
-	 */
-	public PluginManager getPluginManager() {
-		return pluginManager;
-	}
+  /**
+   * Schedules a new task.
+   *
+   * @param task The {@link ScheduledTask}.
+   * @return {@code true} if the task was added successfully.
+   */
+  public boolean schedule(ScheduledTask task) {
+    return scheduler.schedule(task);
+  }
 
-	/**
-	 * Gets this world's {@link RegionRepository}.
-	 *
-	 * @return The RegionRepository.
-	 */
-	public RegionRepository getRegionRepository() {
-		return regions;
-	}
+  /**
+   * Spawns the specified {@link Entity}, which must not be a {@link Player} or an {@link Npc},
+   * which have their own register methods.
+   *
+   * @param entity The Entity.
+   */
+  public void spawn(Entity entity) {
+    EntityType type = entity.getEntityType();
+    Preconditions.checkArgument(type != EntityType.PLAYER && type != EntityType.NPC,
+        "Cannot spawn a Mob.");
 
-	/**
-	 * Gets the release number of this world.
-	 *
-	 * @return The release number.
-	 */
-	public int getReleaseNumber() {
-		return releaseNumber;
-	}
+    Region region = regions.fromPosition(entity.getPosition());
+    region.addEntity(entity);
+  }
 
-	/**
-	 * Initialises the world by loading definitions from the specified file
-	 * system.
-	 *
-	 * @param release The release number.
-	 * @param fs The file system.
-	 * @param manager The plugin manager. TODO move this.
-	 * @throws Exception If there was a failure when loading plugins.
-	 */
-	public void init(int release, IndexedFileSystem fs, PluginManager manager) throws Exception {
-		releaseNumber = release;
+  /**
+   * Submits the specified {@link Event}, passing it to the listeners..
+   *
+   * @param event The Event.
+   * @return {@code true} if the Event should proceed, {@code false} if not.
+   */
+  public boolean submit(Event event) {
+    return events.notify(event);
+  }
 
-		SynchronousDecoder firstStageDecoder = new SynchronousDecoder(
-			new NpcDefinitionDecoder(fs),
-			new ItemDefinitionDecoder(fs),
-			new ObjectDefinitionDecoder(fs),
-			new MapIndexDecoder(fs),
-			EquipmentDefinitionParser.fromFile("data/equipment-" + release + "" + ".dat")
-		);
+  /**
+   * Unregisters the specified {@link Npc}.
+   *
+   * @param npc The npc.
+   */
+  public void unregister(final Npc npc) {
+    Preconditions.checkNotNull(npc, "Npc must not be null.");
+    oldNpcs.add(npc);
+  }
 
-		firstStageDecoder.block();
+  /**
+   * Unregisters the specified player.
+   *
+   * @param player The player.
+   */
+  public void unregister(final Player player) {
+    Preconditions.checkNotNull(player, "Player may not be null.");
+    players.remove(NameUtil.encodeBase37(player.getUsername()));
 
-		SynchronousDecoder secondStageDecoder = new SynchronousDecoder(
-			new WorldObjectsDecoder(fs, this, regions),
-			new WorldMapDecoder(fs, collisionManager)
-		);
+    Region region = regions.fromPosition(player.getPosition());
+    region.removeEntity(player);
 
-		secondStageDecoder.block();
+    playerRepository.remove(player);
+    logger.finest("Unregistered player: " + player + " [count=" + playerRepository.size() + "]");
+  }
 
-		// Build collision matrices for the first time
-		collisionManager.build(false);
-		regions.addRegionListener(new CollisionUpdateListener(collisionManager));
+  /**
+   * Adds entities to regions in the {@link RegionRepository}. By default, we do not notify
+   * listeners.
+   *
+   * @param entities The entities.
+   */
+  private void placeEntities(Entity... entities) {
+    Arrays.stream(entities)
+        .forEach(entity -> regions.fromPosition(entity.getPosition()).addEntity(entity, false));
+  }
 
-		npcMovement = new NpcMovementTask(collisionManager); // Must be exactly here because of ordering issues.
-		scheduler.schedule(npcMovement);
+  /**
+   * Registers all of the {@link Npc}s in the {@link #queuedNpcs queue}.
+   */
+  private void registerNpcs() {
+    while (!queuedNpcs.isEmpty()) {
+      Npc npc = queuedNpcs.poll();
+      boolean success = npcRepository.add(npc);
 
-		manager.start();
-		commandDispatcher.init(manager.getAuthors());
-		pluginManager = manager;
-	}
+      if (success) {
+        Region region = regions.fromPosition(npc.getPosition());
+        region.addEntity(npc);
 
-	/**
-	 * Checks if the {@link Player} with the specified name is online.
-	 *
-	 * @param username The name.
-	 * @return {@code true} if the player is online, otherwise {@code false}.
-	 */
-	public boolean isPlayerOnline(String username) {
-		return players.get(NameUtil.encodeBase37(username)) != null;
-	}
+        if (npc.hasBoundaries()) {
+          npcMovement.addNpc(npc);
+        }
+      } else {
+        logger.warning(
+            "Failed to register npc (capacity reached): [count=" + npcRepository.size() + "]");
+      }
+    }
+  }
 
-	/**
-	 * Adds an {@link EventListener}, listening for an {@link Event} of the
-	 * specified type.
-	 *
-	 * @param type The type of the Event.
-	 * @param listener The EventListener.
-	 */
-	public <E extends Event> void listenFor(Class<E> type, EventListener<E> listener) {
-		events.putListener(type, listener);
-	}
+  /**
+   * Unregisters all of the {@link Npc}s in the {@link #oldNpcs queue}.
+   */
+  private void unregisterNpcs() {
+    while (!oldNpcs.isEmpty()) {
+      Npc npc = oldNpcs.poll();
 
-	/**
-	 * Pulses this World.
-	 */
-	public void pulse() {
-		unregisterNpcs();
-		registerNpcs();
-		scheduler.pulse();
-	}
+      Region region = regions.fromPosition(npc.getPosition());
+      region.removeEntity(npc);
 
-	/**
-	 * Registers the specified {@link Npc}.
-	 *
-	 * @param npc The Npc.
-	 */
-	public void register(Npc npc) {
-		queuedNpcs.add(npc);
-	}
+      npcRepository.remove(npc);
+    }
+  }
 
-	/**
-	 * Registers the specified {@link Player}.
-	 *
-	 * @param player The Player.
-	 */
-	public void register(Player player) {
-		String username = player.getUsername();
+  /**
+   * Represents the different status codes for registering a player.
+   *
+   * @author Graham
+   */
+  public enum RegistrationStatus {
 
-		playerRepository.add(player);
-		players.put(NameUtil.encodeBase37(username), player);
+    /**
+     * Indicates that the player is already online.
+     */
+    ALREADY_ONLINE,
 
-		logger.finest("Registered player: " + player + " [count=" + playerRepository.size() + "]");
-	}
+    /**
+     * Indicates that the player was registered successfully.
+     */
+    OK,
 
-	/**
-	 * Schedules a new task.
-	 *
-	 * @param task The {@link ScheduledTask}.
-	 * @return {@code true} if the task was added successfully.
-	 */
-	public boolean schedule(ScheduledTask task) {
-		return scheduler.schedule(task);
-	}
+    /**
+     * Indicates the world is full.
+     */
+    WORLD_FULL;
 
-	/**
-	 * Spawns the specified {@link Entity}, which must not be a {@link Player}
-	 * or an {@link Npc}, which have their own register methods.
-	 *
-	 * @param entity The Entity.
-	 */
-	public void spawn(Entity entity) {
-		EntityType type = entity.getEntityType();
-		Preconditions.checkArgument(type != EntityType.PLAYER && type != EntityType.NPC, "Cannot spawn a Mob.");
-
-		Region region = regions.fromPosition(entity.getPosition());
-		region.addEntity(entity);
-	}
-
-	/**
-	 * Submits the specified {@link Event}, passing it to the listeners..
-	 *
-	 * @param event The Event.
-	 * @return {@code true} if the Event should proceed, {@code false} if not.
-	 */
-	public boolean submit(Event event) {
-		return events.notify(event);
-	}
-
-	/**
-	 * Unregisters the specified {@link Npc}.
-	 *
-	 * @param npc The npc.
-	 */
-	public void unregister(final Npc npc) {
-		Preconditions.checkNotNull(npc, "Npc must not be null.");
-		oldNpcs.add(npc);
-	}
-
-	/**
-	 * Unregisters the specified player.
-	 *
-	 * @param player The player.
-	 */
-	public void unregister(final Player player) {
-		Preconditions.checkNotNull(player, "Player may not be null.");
-		players.remove(NameUtil.encodeBase37(player.getUsername()));
-
-		Region region = regions.fromPosition(player.getPosition());
-		region.removeEntity(player);
-
-		playerRepository.remove(player);
-		logger.finest("Unregistered player: " + player + " [count=" + playerRepository.size() + "]");
-	}
-
-	/**
-	 * Adds entities to regions in the {@link RegionRepository}. By default, we
-	 * do not notify listeners.
-	 *
-	 * @param entities The entities.
-	 */
-	private void placeEntities(Entity... entities) {
-		Arrays.stream(entities).forEach(entity -> regions.fromPosition(entity.getPosition()).addEntity(entity, false));
-	}
-
-	/**
-	 * Registers all of the {@link Npc}s in the {@link #queuedNpcs queue}.
-	 */
-	private void registerNpcs() {
-		while (!queuedNpcs.isEmpty()) {
-			Npc npc = queuedNpcs.poll();
-			boolean success = npcRepository.add(npc);
-
-			if (success) {
-				Region region = regions.fromPosition(npc.getPosition());
-				region.addEntity(npc);
-
-				if (npc.hasBoundaries()) {
-					npcMovement.addNpc(npc);
-				}
-			} else {
-				logger.warning("Failed to register npc (capacity reached): [count=" + npcRepository.size() + "]");
-			}
-		}
-	}
-
-	/**
-	 * Unregisters all of the {@link Npc}s in the {@link #oldNpcs queue}.
-	 */
-	private void unregisterNpcs() {
-		while (!oldNpcs.isEmpty()) {
-			Npc npc = oldNpcs.poll();
-
-			Region region = regions.fromPosition(npc.getPosition());
-			region.removeEntity(npc);
-
-			npcRepository.remove(npc);
-		}
-	}
+  }
 
 }

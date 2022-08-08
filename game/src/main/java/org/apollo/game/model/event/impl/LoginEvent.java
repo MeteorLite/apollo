@@ -10,13 +10,13 @@ import org.apollo.game.model.event.PlayerEvent;
  */
 public final class LoginEvent extends PlayerEvent {
 
-	/**
-	 * Creates the LoginEvent.
-	 *
-	 * @param player The {@link Player} logging in.
-	 */
-	public LoginEvent(Player player) {
-		super(player);
-	}
+  /**
+   * Creates the LoginEvent.
+   *
+   * @param player The {@link Player} logging in.
+   */
+  public LoginEvent(Player player) {
+    super(player);
+  }
 
 }

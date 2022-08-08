@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class UpdateRunEnergyMessage extends Message {
 
-	/**
-	 * The run energy.
-	 */
-	private final int energy;
+  /**
+   * The run energy.
+   */
+  private final int energy;
 
-	/**
-	 * Creates a new update run energy message.
-	 *
-	 * @param energy The energy.
-	 */
-	public UpdateRunEnergyMessage(int energy) {
-		this.energy = energy;
-	}
+  /**
+   * Creates a new update run energy message.
+   *
+   * @param energy The energy.
+   */
+  public UpdateRunEnergyMessage(int energy) {
+    this.energy = energy;
+  }
 
-	/**
-	 * Gets the amount of run energy.
-	 *
-	 * @return The energy.
-	 */
-	public int getEnergy() {
-		return energy;
-	}
+  /**
+   * Gets the amount of run energy.
+   *
+   * @return The energy.
+   */
+  public int getEnergy() {
+    return energy;
+  }
 
 }

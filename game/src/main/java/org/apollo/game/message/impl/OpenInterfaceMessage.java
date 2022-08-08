@@ -9,27 +9,27 @@ import org.apollo.net.message.Message;
  */
 public final class OpenInterfaceMessage extends Message {
 
-	/**
-	 * The interface id.
-	 */
-	private final int id;
+  /**
+   * The interface id.
+   */
+  private final int id;
 
-	/**
-	 * Creates the message with the specified interface id.
-	 *
-	 * @param id The interface id.
-	 */
-	public OpenInterfaceMessage(int id) {
-		this.id = id;
-	}
+  /**
+   * Creates the message with the specified interface id.
+   *
+   * @param id The interface id.
+   */
+  public OpenInterfaceMessage(int id) {
+    this.id = id;
+  }
 
-	/**
-	 * Gets the interface id.
-	 *
-	 * @return The interface id.
-	 */
-	public int getId() {
-		return id;
-	}
+  /**
+   * Gets the interface id.
+   *
+   * @return The interface id.
+   */
+  public int getId() {
+    return id;
+  }
 
 }

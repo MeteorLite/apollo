@@ -10,9 +10,9 @@ import org.apollo.game.model.entity.setting.PrivilegeLevel
  * A handler for [Command]s.
  */
 class KotlinCommandHandler(
-    val world: World,
-    val command: String,
-    privileges: PrivilegeLevel
+        val world: World,
+        val command: String,
+        privileges: PrivilegeLevel
 ) : CommandListener(privileges) {
 
     var callback: Command.(Player) -> Unit = {}

@@ -9,14 +9,14 @@ import org.apollo.game.model.entity.EntityType;
  */
 public final class MagicOnNpcMessage extends MagicOnMobMessage {
 
-	/**
-	 * Creates the MagicOnMobMessage.
-	 *
-	 * @param index The Npc index.
-	 * @param spellId The spell id used.
-	 */
-	public MagicOnNpcMessage(int index, int spellId) {
-		super(EntityType.NPC, index, spellId);
-	}
+  /**
+   * Creates the MagicOnMobMessage.
+   *
+   * @param index   The Npc index.
+   * @param spellId The spell id used.
+   */
+  public MagicOnNpcMessage(int index, int spellId) {
+    super(EntityType.NPC, index, spellId);
+  }
 
 }

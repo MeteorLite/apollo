@@ -12,22 +12,22 @@ import org.apollo.game.sync.block.SynchronizationBlock;
  */
 public final class PublicChatMessageHandler extends MessageHandler<PublicChatMessage> {
 
-	/**
-	 * Creates the PublicChatMessageHandler.
-	 *
-	 * @param world The {@link World} the {@link PublicChatMessage} occurred in.
-	 */
-	public PublicChatMessageHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the PublicChatMessageHandler.
+   *
+   * @param world The {@link World} the {@link PublicChatMessage} occurred in.
+   */
+  public PublicChatMessageHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, PublicChatMessage message) {
-		if (player.isMuted()) {
-			message.terminate();
-			return;
-		}
-		player.getBlockSet().add(SynchronizationBlock.createChatBlock(player, message));
-	}
+  @Override
+  public void handle(Player player, PublicChatMessage message) {
+    if (player.isMuted()) {
+      message.terminate();
+      return;
+    }
+    player.getBlockSet().add(SynchronizationBlock.createChatBlock(player, message));
+  }
 
 }

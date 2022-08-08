@@ -7,101 +7,98 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
-import io.netty.util.ReferenceCountUtil;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apollo.ServerContext;
 import org.apollo.net.codec.handshake.HandshakeConstants;
 import org.apollo.net.codec.handshake.HandshakeMessage;
 import org.apollo.net.codec.jaggrab.JagGrabRequest;
 
 /**
- * An implementation of {@link ChannelInboundHandlerAdapter} which handles incoming upstream events from Netty.
+ * An implementation of {@link ChannelInboundHandlerAdapter} which handles incoming upstream events
+ * from Netty.
  *
  * @author Graham
  */
 @Sharable
 public final class ApolloHandler extends ChannelInboundHandlerAdapter {
 
-	/**
-	 * The logger for this class.
-	 */
-	private static final Logger logger = Logger.getLogger(ApolloHandler.class.getName());
+  /**
+   * The {@link Session} {@link AttributeKey}.
+   */
+  public static final AttributeKey<Session> SESSION_KEY = AttributeKey.valueOf("session");
+  /**
+   * The logger for this class.
+   */
+  private static final Logger logger = Logger.getLogger(ApolloHandler.class.getName());
+  /**
+   * The server context.
+   */
+  private final ServerContext serverContext;
 
-	/**
-	 * The server context.
-	 */
-	private final ServerContext serverContext;
+  /**
+   * Creates the Apollo event handler.
+   *
+   * @param context The server context.
+   */
+  public ApolloHandler(ServerContext context) {
+    serverContext = context;
+  }
 
-	/**
-	 * The {@link Session} {@link AttributeKey}.
-	 */
-	public static final AttributeKey<Session> SESSION_KEY = AttributeKey.valueOf("session");
+  @Override
+  public void channelInactive(ChannelHandlerContext ctx) {
+    Channel channel = ctx.channel();
+    Session session = channel.attr(ApolloHandler.SESSION_KEY).getAndRemove();
+    if (session != null) {
+      session.destroy();
+    }
+    logger.fine("Channel disconnected: " + channel);
+    channel.close();
+  }
 
-	/**
-	 * Creates the Apollo event handler.
-	 *
-	 * @param context The server context.
-	 */
-	public ApolloHandler(ServerContext context) {
-		serverContext = context;
-	}
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) {
+    if (!e.getMessage().contains("An existing connection was forcibly closed by the remote host")) {
+      logger.log(Level.WARNING, "Exception occured for channel: " + ctx.channel() + ", closing...",
+          e);
+    }
+    ctx.channel().close();
+  }
 
-	@Override
-	public void channelInactive(ChannelHandlerContext ctx) {
-		Channel channel = ctx.channel();
-		Session session = channel.attr(ApolloHandler.SESSION_KEY).getAndRemove();
-		if (session != null) {
-			session.destroy();
-		}
-		logger.fine("Channel disconnected: " + channel);
-		channel.close();
-	}
+  @Override
+  public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
+    Channel channel = ctx.channel();
+    Attribute<Session> attribute = channel.attr(ApolloHandler.SESSION_KEY);
+    Session session = attribute.get();
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) {
-		if (!e.getMessage().contains("An existing connection was forcibly closed by the remote host")) {
-			logger.log(Level.WARNING, "Exception occured for channel: " + ctx.channel() + ", closing...", e);
-		}
-		ctx.channel().close();
-	}
+    if (message instanceof HttpRequest || message instanceof JagGrabRequest) {
+      session = new UpdateSession(channel, serverContext);
+    }
 
-	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
-		Channel channel = ctx.channel();
-		Attribute<Session> attribute = channel.attr(ApolloHandler.SESSION_KEY);
-		Session session = attribute.get();
+    if (session != null) {
+      session.messageReceived(message);
+      return;
+    }
 
-		if (message instanceof HttpRequest || message instanceof JagGrabRequest) {
-			session = new UpdateSession(channel, serverContext);
-		}
+    // TODO: Perhaps let HandshakeMessage implement Message to remove this explicit check
+    if (message instanceof HandshakeMessage) {
+      HandshakeMessage handshakeMessage = (HandshakeMessage) message;
 
-		if (session != null) {
-			session.messageReceived(message);
-			return;
-		}
+      switch (handshakeMessage.getServiceId()) {
+        case HandshakeConstants.SERVICE_GAME:
+          attribute.set(new LoginSession(channel, serverContext));
+          break;
 
-		// TODO: Perhaps let HandshakeMessage implement Message to remove this explicit check
-		if (message instanceof HandshakeMessage) {
-			HandshakeMessage handshakeMessage = (HandshakeMessage) message;
+        case HandshakeConstants.SERVICE_UPDATE:
+          attribute.set(new UpdateSession(channel, serverContext));
+          break;
+      }
+    }
+  }
 
-			switch (handshakeMessage.getServiceId()) {
-				case HandshakeConstants.SERVICE_GAME:
-					attribute.set(new LoginSession(channel, serverContext));
-					break;
-
-				case HandshakeConstants.SERVICE_UPDATE:
-					attribute.set(new UpdateSession(channel, serverContext));
-					break;
-			}
-		}
-	}
-
-	@Override
-	public void channelReadComplete(ChannelHandlerContext ctx) {
-		ctx.flush();
-	}
+  @Override
+  public void channelReadComplete(ChannelHandlerContext ctx) {
+    ctx.flush();
+  }
 
 }

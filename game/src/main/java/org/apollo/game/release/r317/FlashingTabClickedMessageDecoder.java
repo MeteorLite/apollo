@@ -11,13 +11,14 @@ import org.apollo.net.release.MessageDecoder;
  *
  * @author Major
  */
-public final class FlashingTabClickedMessageDecoder extends MessageDecoder<FlashingTabClickedMessage> {
+public final class FlashingTabClickedMessageDecoder extends
+    MessageDecoder<FlashingTabClickedMessage> {
 
-	@Override
-	public FlashingTabClickedMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		int tab = (int) reader.getUnsigned(DataType.BYTE);
-		return new FlashingTabClickedMessage(tab);
-	}
+  @Override
+  public FlashingTabClickedMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    int tab = (int) reader.getUnsigned(DataType.BYTE);
+    return new FlashingTabClickedMessage(tab);
+  }
 
 }

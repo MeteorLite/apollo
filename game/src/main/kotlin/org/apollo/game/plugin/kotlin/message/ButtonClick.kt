@@ -19,9 +19,9 @@ import org.apollo.game.plugin.kotlin.PredicateContext
  * ```
  */
 fun KotlinPluginScript.on(
-    listenable: ButtonClick.Companion,
-    button: Int,
-    callback: ButtonClick.() -> Unit
+        listenable: ButtonClick.Companion,
+        button: Int,
+        callback: ButtonClick.() -> Unit
 ) {
     registerListener(listenable, ButtonPredicateContext(button), callback)
 }
@@ -31,11 +31,11 @@ class ButtonClick(override val player: Player, val button: Int) : PlayerContext 
     companion object : MessageListenable<ButtonMessage, ButtonClick, ButtonPredicateContext>() {
 
         override val type = ButtonMessage::class
-        
+
         override fun createHandler(
-            world: World,
-            predicateContext: ButtonPredicateContext?,
-            callback: ButtonClick.() -> Unit
+                world: World,
+                predicateContext: ButtonPredicateContext?,
+                callback: ButtonClick.() -> Unit
         ): MessageHandler<ButtonMessage> {
             return object : MessageHandler<ButtonMessage>(world) {
 

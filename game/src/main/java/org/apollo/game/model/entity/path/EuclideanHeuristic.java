@@ -7,11 +7,11 @@ import org.apollo.game.model.Position;
  */
 public final class EuclideanHeuristic extends Heuristic {
 
-	/**
-	 * @see Position#getDistance(Position)
-	 */
-	@Override
-	public int estimate(Position current, Position target) {
-		return current.getDistance(target);
-	}
+  /**
+   * @see Position#getDistance(Position)
+   */
+  @Override
+  public int estimate(Position current, Position target) {
+    return current.getDistance(target);
+  }
 }

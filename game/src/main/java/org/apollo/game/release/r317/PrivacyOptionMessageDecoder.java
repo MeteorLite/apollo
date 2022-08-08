@@ -13,15 +13,15 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class PrivacyOptionMessageDecoder extends MessageDecoder<PrivacyOptionMessage> {
 
-	@Override
-	public PrivacyOptionMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
+  @Override
+  public PrivacyOptionMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
 
-		int publicChatState = (int) reader.getUnsigned(DataType.BYTE);
-		int privateChatState = (int) reader.getUnsigned(DataType.BYTE);
-		int tradeChatState = (int) reader.getUnsigned(DataType.BYTE);
+    int publicChatState = (int) reader.getUnsigned(DataType.BYTE);
+    int privateChatState = (int) reader.getUnsigned(DataType.BYTE);
+    int tradeChatState = (int) reader.getUnsigned(DataType.BYTE);
 
-		return new PrivacyOptionMessage(publicChatState, privateChatState, tradeChatState);
-	}
+    return new PrivacyOptionMessage(publicChatState, privateChatState, tradeChatState);
+  }
 
 }

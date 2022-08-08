@@ -14,11 +14,11 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class ArrowKeyMessageDecoder extends MessageDecoder<ArrowKeyMessage> {
 
-	@Override
-	public ArrowKeyMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
-		int roll = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-		int yaw = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
-		return new ArrowKeyMessage(roll, yaw);
-	}
+  @Override
+  public ArrowKeyMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
+    int roll = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    int yaw = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+    return new ArrowKeyMessage(roll, yaw);
+  }
 }

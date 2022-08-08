@@ -12,13 +12,14 @@ import org.apollo.net.release.MessageEncoder;
  *
  * @author Chris Fletcher
  */
-public final class DisplayTabInterfaceMessageEncoder extends MessageEncoder<DisplayTabInterfaceMessage> {
+public final class DisplayTabInterfaceMessageEncoder extends
+    MessageEncoder<DisplayTabInterfaceMessage> {
 
-	@Override
-	public GamePacket encode(DisplayTabInterfaceMessage message) {
-		GamePacketBuilder builder = new GamePacketBuilder(252);
-		builder.put(DataType.BYTE, DataTransformation.NEGATE, message.getTab());
-		return builder.toGamePacket();
-	}
+  @Override
+  public GamePacket encode(DisplayTabInterfaceMessage message) {
+    GamePacketBuilder builder = new GamePacketBuilder(252);
+    builder.put(DataType.BYTE, DataTransformation.NEGATE, message.getTab());
+    return builder.toGamePacket();
+  }
 
 }

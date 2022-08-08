@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import org.apollo.Service;
 import org.apollo.game.GameConstants;
 import org.apollo.game.GamePulseHandler;
@@ -28,247 +27,244 @@ import org.apollo.util.xml.XmlParser;
 import org.xml.sax.SAXException;
 
 /**
- * The {@link GameService} class schedules and manages the execution of the {@link GamePulseHandler} class.
+ * The {@link GameService} class schedules and manages the execution of the {@link GamePulseHandler}
+ * class.
  *
  * @author Graham
  */
 public final class GameService extends Service {
 
-	/**
-	 * A utility class wrapping a {@link Player} and their corresponding {@link LoginSession}.
-	 */
-	private static final class LoginPlayerRequest {
+  /**
+   * The amount of players to deregister per cycle. This is to ensure the saving threads don't get
+   * swamped with requests and slow everything down.
+   */
+  private static final int DEREGISTRATIONS_PER_CYCLE = 50;
+  /**
+   * The amount of players to register per cycle.
+   */
+  private static final int REGISTRATIONS_PER_CYCLE = 25;
+  /**
+   * The World this Service is for.
+   */
+  protected final World world;
+  /**
+   * The scheduled executor service.
+   */
+  private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
+      ThreadUtil.create("GameService"));
+  /**
+   * The Queue of LoginPlayers to add.
+   */
+  private final Queue<LoginPlayerRequest> newPlayers = new ConcurrentLinkedQueue<>();
+  /**
+   * The Queue of Players to remove.
+   */
+  private final Queue<Player> oldPlayers = new ConcurrentLinkedQueue<>();
+  /**
+   * The {@link MessageHandlerChainSet}.
+   */
+  private MessageHandlerChainSet handlers;
+  /**
+   * The {@link ClientSynchronizer}.
+   */
+  private ClientSynchronizer synchronizer;
 
-		/**
-		 * The Player.
-		 */
-		private final Player player;
+  /**
+   * Creates the GameService.
+   *
+   * @param world The {@link World} the GameService is for.
+   * @throws Exception If an error occurs during initialization.
+   */
+  public GameService(World world) throws Exception {
+    this.world = world;
+    init();
+  }
 
-		/**
-		 * The LoginSession.
-		 */
-		private final LoginSession session;
+  /**
+   * Finalizes the registration of a player.
+   *
+   * @param player The player.
+   */
+  public synchronized void finalizePlayerRegistration(Player player) {
+    world.register(player);
+    Region region = world.getRegionRepository().fromPosition(player.getPosition());
+    region.addEntity(player);
 
-		/**
-		 * Creates the LoginPlayerRequest.
-		 *
-		 * @param player The {@link Player} logging in.
-		 * @param session The {@link LoginSession} of the Player.
-		 */
-		public LoginPlayerRequest(Player player, LoginSession session) {
-			this.player = player;
-			this.session = session;
-		}
+    if (!player.getSession().isReconnecting()) {
+      player.sendInitialMessages();
+    }
+  }
 
-	}
+  /**
+   * Finalizes the unregistration of a player.
+   *
+   * @param player The player.
+   */
+  public synchronized void finalizePlayerUnregistration(Player player) {
+    world.unregister(player);
+  }
 
-	/**
-	 * The amount of players to deregister per cycle. This is to ensure the saving threads don't get swamped with
-	 * requests and slow everything down.
-	 */
-	private static final int DEREGISTRATIONS_PER_CYCLE = 50;
+  /**
+   * Gets the MessageHandlerChainSet
+   *
+   * @return The MessageHandlerChainSet.
+   */
+  public MessageHandlerChainSet getMessageHandlerChainSet() {
+    return handlers;
+  }
 
-	/**
-	 * The amount of players to register per cycle.
-	 */
-	private static final int REGISTRATIONS_PER_CYCLE = 25;
+  /**
+   * Called every pulse.
+   */
+  public synchronized void pulse() {
+    finalizeRegistrations();
+    finalizeUnregistrations();
 
-	/**
-	 * The World this Service is for.
-	 */
-	protected final World world;
+    MobRepository<Player> players = world.getPlayerRepository();
+    for (Player player : players) {
+      GameSession session = player.getSession();
 
-	/**
-	 * The scheduled executor service.
-	 */
-	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(ThreadUtil.create("GameService"));
+      if (session != null) {
+        session.handlePendingMessages(handlers);
+      }
+    }
 
-	/**
-	 * The Queue of LoginPlayers to add.
-	 */
-	private final Queue<LoginPlayerRequest> newPlayers = new ConcurrentLinkedQueue<>();
+    world.pulse();
+    synchronizer.synchronize(players, world.getNpcRepository());
+  }
 
-	/**
-	 * The Queue of Players to remove.
-	 */
-	private final Queue<Player> oldPlayers = new ConcurrentLinkedQueue<>();
+  /**
+   * Registers a {@link Player} at the end of the next cycle.
+   *
+   * @param player  The Player to register.
+   * @param session the {@link LoginSession} of the Player.
+   */
+  public void registerPlayer(Player player, LoginSession session) {
+    newPlayers.add(new LoginPlayerRequest(player, session));
+  }
 
-	/**
-	 * The {@link MessageHandlerChainSet}.
-	 */
-	private MessageHandlerChainSet handlers;
+  /**
+   * Shuts down this game service.
+   *
+   * @param natural Whether or not the shutdown was expected.
+   */
+  public void shutdown(boolean natural) {
+    executor.shutdownNow();
+    // TODO: Other events that should happen upon natural or unexpected shutdown.
+  }
 
-	/**
-	 * The {@link ClientSynchronizer}.
-	 */
-	private ClientSynchronizer synchronizer;
+  @Override
+  public void start() {
+    executor.scheduleAtFixedRate(new GamePulseHandler(this), GameConstants.PULSE_DELAY,
+        GameConstants.PULSE_DELAY,
+        TimeUnit.MILLISECONDS);
+  }
 
-	/**
-	 * Creates the GameService.
-	 *
-	 * @param world The {@link World} the GameService is for.
-	 * @throws Exception If an error occurs during initialization.
-	 */
-	public GameService(World world) throws Exception {
-		this.world = world;
-		init();
-	}
+  /**
+   * Unregisters a player. Returns immediately. The player is unregistered at the start of the next
+   * cycle.
+   *
+   * @param player The player.
+   */
+  public void unregisterPlayer(Player player) {
+    oldPlayers.add(player);
+  }
 
-	/**
-	 * Finalizes the registration of a player.
-	 *
-	 * @param player The player.
-	 */
-	public synchronized void finalizePlayerRegistration(Player player) {
-		world.register(player);
-		Region region = world.getRegionRepository().fromPosition(player.getPosition());
-		region.addEntity(player);
+  /**
+   * Finalizes the registration of Player's queued to be registered.
+   */
+  private void finalizeRegistrations() {
+    for (int count = 0; count < REGISTRATIONS_PER_CYCLE; count++) {
+      LoginPlayerRequest request = newPlayers.poll();
+      if (request == null) {
+        break;
+      }
 
-		if (!player.getSession().isReconnecting()) {
-			player.sendInitialMessages();
-		}
-	}
+      Player player = request.player;
+      if (world.isPlayerOnline(player.getUsername())) {
+        request.session.sendLoginFailure(LoginConstants.STATUS_ACCOUNT_ONLINE);
+      } else if (world.getPlayerRepository().full()) {
+        request.session.sendLoginFailure(LoginConstants.STATUS_SERVER_FULL);
+      } else {
+        request.session.sendLoginSuccess(player);
+        finalizePlayerRegistration(player);
+      }
+    }
+  }
 
-	/**
-	 * Finalizes the unregistration of a player.
-	 *
-	 * @param player The player.
-	 */
-	public synchronized void finalizePlayerUnregistration(Player player) {
-		world.unregister(player);
-	}
+  /**
+   * Finalizes the unregistration of Player's queued to be unregistered.
+   */
+  private void finalizeUnregistrations() {
+    LoginService loginService = context.getLoginService();
 
-	/**
-	 * Gets the MessageHandlerChainSet
-	 *
-	 * @return The MessageHandlerChainSet.
-	 */
-	public MessageHandlerChainSet getMessageHandlerChainSet() {
-		return handlers;
-	}
+    for (int count = 0; count < DEREGISTRATIONS_PER_CYCLE; count++) {
+      Player player = oldPlayers.poll();
+      if (player == null) {
+        break;
+      }
 
-	/**
-	 * Called every pulse.
-	 */
-	public synchronized void pulse() {
-		finalizeRegistrations();
-		finalizeUnregistrations();
+      loginService.submitSaveRequest(player.getSession(), player);
+    }
+  }
 
-		MobRepository<Player> players = world.getPlayerRepository();
-		for (Player player : players) {
-			GameSession session = player.getSession();
+  /**
+   * Initializes the game service.
+   *
+   * @throws IOException                  If there is an error accessing the file.
+   * @throws SAXException                 If there is an error parsing the file.
+   * @throws ReflectiveOperationException If a MessageHandler could not be created.
+   */
+  private void init() throws IOException, SAXException, ReflectiveOperationException {
+    try (InputStream input = new FileInputStream("data/messages.xml")) {
+      MessageHandlerChainSetParser chainSetParser = new MessageHandlerChainSetParser(input);
+      handlers = chainSetParser.parse(world);
+    }
 
-			if (session != null) {
-				session.handlePendingMessages(handlers);
-			}
-		}
+    try (InputStream input = new FileInputStream("data/synchronizer.xml")) {
+      XmlParser parser = new XmlParser();
+      XmlNode root = parser.parse(input);
 
-		world.pulse();
-		synchronizer.synchronize(players, world.getNpcRepository());
-	}
+      if (!root.getName().equals("synchronizer")) {
+        throw new IOException("Invalid root node name.");
+      }
 
-	/**
-	 * Registers a {@link Player} at the end of the next cycle.
-	 *
-	 * @param player The Player to register.
-	 * @param session the {@link LoginSession} of the Player.
-	 */
-	public void registerPlayer(Player player, LoginSession session) {
-		newPlayers.add(new LoginPlayerRequest(player, session));
-	}
+      XmlNode active = root.getChild("active");
+      if (active == null || !active.hasValue()) {
+        throw new IOException("No active node/value.");
+      }
 
-	/**
-	 * Shuts down this game service.
-	 *
-	 * @param natural Whether or not the shutdown was expected.
-	 */
-	public void shutdown(boolean natural) {
-		executor.shutdownNow();
-		// TODO: Other events that should happen upon natural or unexpected shutdown.
-	}
+      Class<?> clazz = Class.forName(active.getValue());
+      synchronizer = (ClientSynchronizer) clazz.newInstance();
+    }
+  }
 
-	@Override
-	public void start() {
-		executor.scheduleAtFixedRate(new GamePulseHandler(this), GameConstants.PULSE_DELAY, GameConstants.PULSE_DELAY,
-				TimeUnit.MILLISECONDS);
-	}
+  /**
+   * A utility class wrapping a {@link Player} and their corresponding {@link LoginSession}.
+   */
+  private static final class LoginPlayerRequest {
 
-	/**
-	 * Unregisters a player. Returns immediately. The player is unregistered at the start of the next cycle.
-	 *
-	 * @param player The player.
-	 */
-	public void unregisterPlayer(Player player) {
-		oldPlayers.add(player);
-	}
+    /**
+     * The Player.
+     */
+    private final Player player;
 
-	/**
-	 * Finalizes the registration of Player's queued to be registered.
-	 */
-	private void finalizeRegistrations() {
-		for (int count = 0; count < REGISTRATIONS_PER_CYCLE; count++) {
-			LoginPlayerRequest request = newPlayers.poll();
-			if (request == null) {
-				break;
-			}
+    /**
+     * The LoginSession.
+     */
+    private final LoginSession session;
 
-			Player player = request.player;
-			if (world.isPlayerOnline(player.getUsername())) {
-				request.session.sendLoginFailure(LoginConstants.STATUS_ACCOUNT_ONLINE);
-			} else if (world.getPlayerRepository().full()) {
-				request.session.sendLoginFailure(LoginConstants.STATUS_SERVER_FULL);
-			} else {
-				request.session.sendLoginSuccess(player);
-				finalizePlayerRegistration(player);
-			}
-		}
-	}
+    /**
+     * Creates the LoginPlayerRequest.
+     *
+     * @param player  The {@link Player} logging in.
+     * @param session The {@link LoginSession} of the Player.
+     */
+    public LoginPlayerRequest(Player player, LoginSession session) {
+      this.player = player;
+      this.session = session;
+    }
 
-	/**
-	 * Finalizes the unregistration of Player's queued to be unregistered.
-	 */
-	private void finalizeUnregistrations() {
-		LoginService loginService = context.getLoginService();
-
-		for (int count = 0; count < DEREGISTRATIONS_PER_CYCLE; count++) {
-			Player player = oldPlayers.poll();
-			if (player == null) {
-				break;
-			}
-
-			loginService.submitSaveRequest(player.getSession(), player);
-		}
-	}
-
-	/**
-	 * Initializes the game service.
-	 *
-	 * @throws IOException If there is an error accessing the file.
-	 * @throws SAXException If there is an error parsing the file.
-	 * @throws ReflectiveOperationException If a MessageHandler could not be created.
-	 */
-	private void init() throws IOException, SAXException, ReflectiveOperationException {
-		try (InputStream input = new FileInputStream("data/messages.xml")) {
-			MessageHandlerChainSetParser chainSetParser = new MessageHandlerChainSetParser(input);
-			handlers = chainSetParser.parse(world);
-		}
-
-		try (InputStream input = new FileInputStream("data/synchronizer.xml")) {
-			XmlParser parser = new XmlParser();
-			XmlNode root = parser.parse(input);
-
-			if (!root.getName().equals("synchronizer")) {
-				throw new IOException("Invalid root node name.");
-			}
-
-			XmlNode active = root.getChild("active");
-			if (active == null || !active.hasValue()) {
-				throw new IOException("No active node/value.");
-			}
-
-			Class<?> clazz = Class.forName(active.getValue());
-			synchronizer = (ClientSynchronizer) clazz.newInstance();
-		}
-	}
+  }
 
 }

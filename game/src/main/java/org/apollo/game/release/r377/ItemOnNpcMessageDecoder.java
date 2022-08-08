@@ -15,16 +15,16 @@ import org.apollo.net.release.MessageDecoder;
  */
 public final class ItemOnNpcMessageDecoder extends MessageDecoder<ItemOnNpcMessage> {
 
-	@Override
-	public ItemOnNpcMessage decode(GamePacket packet) {
-		GamePacketReader reader = new GamePacketReader(packet);
+  @Override
+  public ItemOnNpcMessage decode(GamePacket packet) {
+    GamePacketReader reader = new GamePacketReader(packet);
 
-		int index = (int) reader.getUnsigned(DataType.SHORT);
-		int id = (int) reader.getSigned(DataType.SHORT, DataOrder.LITTLE);
-		int widget = (int) reader.getUnsigned(DataType.SHORT,  DataOrder.LITTLE, DataTransformation.ADD);
-		int slot = (int) reader.getUnsigned(DataType.SHORT);
+    int index = (int) reader.getUnsigned(DataType.SHORT);
+    int id = (int) reader.getSigned(DataType.SHORT, DataOrder.LITTLE);
+    int widget = (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
+    int slot = (int) reader.getUnsigned(DataType.SHORT);
 
-		return new ItemOnNpcMessage(id, index, slot, widget);
-	}
+    return new ItemOnNpcMessage(id, index, slot, widget);
+  }
 
 }

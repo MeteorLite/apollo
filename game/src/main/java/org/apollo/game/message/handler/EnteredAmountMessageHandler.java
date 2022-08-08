@@ -11,18 +11,18 @@ import org.apollo.game.model.entity.Player;
  */
 public final class EnteredAmountMessageHandler extends MessageHandler<EnteredAmountMessage> {
 
-	/**
-	 * Creates the EnteredAmountMessageHandler.
-	 *
-	 * @param world The {@link World} the {@link EnteredAmountMessage} occurred in.
-	 */
-	public EnteredAmountMessageHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the EnteredAmountMessageHandler.
+   *
+   * @param world The {@link World} the {@link EnteredAmountMessage} occurred in.
+   */
+  public EnteredAmountMessageHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, EnteredAmountMessage message) {
-		player.getInterfaceSet().enteredAmount(message.getAmount());
-	}
+  @Override
+  public void handle(Player player, EnteredAmountMessage message) {
+    player.getInterfaceSet().enteredAmount(message.getAmount());
+  }
 
 }

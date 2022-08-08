@@ -16,36 +16,36 @@ import io.netty.handler.timeout.IdleStateHandler;
  */
 public final class HttpChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-	/**
-	 * The maximum length of a request, in bytes.
-	 */
-	private static final int MAX_REQUEST_LENGTH = 8192;
+  /**
+   * The maximum length of a request, in bytes.
+   */
+  private static final int MAX_REQUEST_LENGTH = 8192;
 
-	/**
-	 * The server event handler.
-	 */
-	private final ChannelInboundHandlerAdapter handler;
+  /**
+   * The server event handler.
+   */
+  private final ChannelInboundHandlerAdapter handler;
 
-	/**
-	 * Creates the HTTP pipeline factory.
-	 *
-	 * @param handler The file server event handler.
-	 */
-	public HttpChannelInitializer(ChannelInboundHandlerAdapter handler) {
-		this.handler = handler;
-	}
+  /**
+   * Creates the HTTP pipeline factory.
+   *
+   * @param handler The file server event handler.
+   */
+  public HttpChannelInitializer(ChannelInboundHandlerAdapter handler) {
+    this.handler = handler;
+  }
 
-	@Override
-	protected void initChannel(SocketChannel ch) throws Exception {
-		ChannelPipeline pipeline = ch.pipeline();
+  @Override
+  protected void initChannel(SocketChannel ch) throws Exception {
+    ChannelPipeline pipeline = ch.pipeline();
 
-		pipeline.addLast("decoder", new HttpRequestDecoder());
-		pipeline.addLast("chunker", new HttpObjectAggregator(MAX_REQUEST_LENGTH));
+    pipeline.addLast("decoder", new HttpRequestDecoder());
+    pipeline.addLast("chunker", new HttpObjectAggregator(MAX_REQUEST_LENGTH));
 
-		pipeline.addLast("encoder", new HttpResponseEncoder());
+    pipeline.addLast("encoder", new HttpResponseEncoder());
 
-		pipeline.addLast("timeout", new IdleStateHandler(NetworkConstants.IDLE_TIME, 0, 0));
-		pipeline.addLast("handler", handler);
-	}
+    pipeline.addLast("timeout", new IdleStateHandler(NetworkConstants.IDLE_TIME, 0, 0));
+    pipeline.addLast("handler", handler);
+  }
 
 }

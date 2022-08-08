@@ -10,13 +10,13 @@ import org.apollo.game.model.event.PlayerEvent;
  */
 public final class LogoutEvent extends PlayerEvent {
 
-	/**
-	 * Creates the LogoutEvent.
-	 *
-	 * @param player The {@link Player} logging out.
-	 */
-	public LogoutEvent(Player player) {
-		super(player);
-	}
+  /**
+   * Creates the LogoutEvent.
+   *
+   * @param player The {@link Player} logging out.
+   */
+  public LogoutEvent(Player player) {
+    super(player);
+  }
 
 }

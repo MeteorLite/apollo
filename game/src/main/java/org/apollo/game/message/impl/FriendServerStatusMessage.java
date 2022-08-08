@@ -10,27 +10,27 @@ import org.apollo.net.message.Message;
  */
 public final class FriendServerStatusMessage extends Message {
 
-	/**
-	 * The status code of the friend server.
-	 */
-	private final int status;
+  /**
+   * The status code of the friend server.
+   */
+  private final int status;
 
-	/**
-	 * Creates a new friend server status message.
-	 *
-	 * @param status The status.
-	 */
-	public FriendServerStatusMessage(ServerStatus status) {
-		this.status = status.getCode();
-	}
+  /**
+   * Creates a new friend server status message.
+   *
+   * @param status The status.
+   */
+  public FriendServerStatusMessage(ServerStatus status) {
+    this.status = status.getCode();
+  }
 
-	/**
-	 * Gets the status code of the friend server.
-	 *
-	 * @return The status code.
-	 */
-	public int getStatusCode() {
-		return status;
-	}
+  /**
+   * Gets the status code of the friend server.
+   *
+   * @return The status code.
+   */
+  public int getStatusCode() {
+    return status;
+  }
 
 }

@@ -3,7 +3,6 @@ package org.apollo.game.plugin.testing.junit
 import io.mockk.every
 import io.mockk.slot
 import io.mockk.spyk
-import kotlin.reflect.KClass
 import org.apollo.game.action.Action
 import org.apollo.game.message.handler.MessageHandlerChainSet
 import org.apollo.game.model.World
@@ -13,6 +12,7 @@ import org.apollo.game.plugin.testing.junit.mocking.StubPrototype
 import org.apollo.game.plugin.testing.junit.stubs.PlayerStubInfo
 import org.apollo.net.message.Message
 import org.apollo.util.security.PlayerCredentials
+import kotlin.reflect.KClass
 
 data class ApolloTestState(val handlers: MessageHandlerChainSet, val world: World) {
     val players = mutableListOf<Player>()
@@ -51,7 +51,12 @@ data class ApolloTestState(val handlers: MessageHandlerChainSet, val world: Worl
         val actionSlot = slot<Action<*>>()
         val messageSlot = slot<Message>()
 
-        every { player.send(capture(messageSlot)) } answers { handlers.notify(player, messageSlot.captured) }
+        every { player.send(capture(messageSlot)) } answers {
+            handlers.notify(
+                player,
+                messageSlot.captured
+            )
+        }
         every { player.startAction(capture(actionSlot)) } answers {
             actionCapture?.capture(actionSlot.captured)
             true

@@ -4,20 +4,20 @@ import java.nio.file.Path
 rootProject.name = 'org.apollo'
 include ':cache'
 include ':game'
-include ':game:plugin'
 include ':game:plugin-detekt-rules'
 include ':game:plugin-testing'
+include ':game:plugins'
 include ':net'
 include ':util'
 
 def pluginDirs = [
-    rootProject.projectDir.toPath().resolve("game/plugin"),
+        rootProject.projectDir.toPath().resolve("game/plugins"),
 ]
 
 def processPluginDir(Path pluginDir) {
     if (pluginDir.toFile().exists()) {
         def pluginFileFinder = new FileNameFinder();
-        def pluginFiles = pluginFileFinder.getFileNames(pluginDir.toString(), "**/*.gradle");
+        def pluginFiles = pluginFileFinder.getFileNames(pluginDir.toString(), "**/*.gradle.kts");
 
         pluginFiles.each { filename ->
             def path = Paths.get(filename)
@@ -30,10 +30,12 @@ def processPluginDir(Path pluginDir) {
             def relativePath = pluginDir.relativize(parentPath)
             def pluginName = relativePath.toString().replace(File.separator, ":")
 
-            include ":game:plugin:$pluginName"
+            include ":game:plugins:$pluginName"
         }
     }
 }
 
 pluginDirs.each { processPluginDir(it) }
+
+
 

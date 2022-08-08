@@ -6,31 +6,31 @@ import org.apollo.game.model.entity.Player;
 import org.apollo.game.model.inter.InterfaceType;
 
 /**
- * A {@link MessageHandler} which intercepts button clicks on dialogues, and forwards the message to the current
- * listener.
+ * A {@link MessageHandler} which intercepts button clicks on dialogues, and forwards the message to
+ * the current listener.
  *
  * @author Chris Fletcher
  */
 public final class DialogueButtonHandler extends MessageHandler<ButtonMessage> {
 
-	/**
-	 * Creates the DialogueButtonHandler.
-	 *
-	 * @param world The {@link World} the {@link ButtonMessage} occurred in.
-	 */
-	public DialogueButtonHandler(World world) {
-		super(world);
-	}
+  /**
+   * Creates the DialogueButtonHandler.
+   *
+   * @param world The {@link World} the {@link ButtonMessage} occurred in.
+   */
+  public DialogueButtonHandler(World world) {
+    super(world);
+  }
 
-	@Override
-	public void handle(Player player, ButtonMessage message) {
-		if (player.getInterfaceSet().contains(InterfaceType.DIALOGUE)) {
-			boolean terminate = player.getInterfaceSet().buttonClicked(message.getWidgetId());
+  @Override
+  public void handle(Player player, ButtonMessage message) {
+    if (player.getInterfaceSet().contains(InterfaceType.DIALOGUE)) {
+      boolean terminate = player.getInterfaceSet().buttonClicked(message.getWidgetId());
 
-			if (terminate) {
-				message.terminate();
-			}
-		}
-	}
+      if (terminate) {
+        message.terminate();
+      }
+    }
+  }
 
 }
