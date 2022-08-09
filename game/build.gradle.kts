@@ -23,6 +23,8 @@ dependencies {
     implementation(group = "com.google.guava", name = "guava", version = "31.1-jre")
     implementation(group = "com.lambdaworks", name = "scrypt", version = "1.4.0")
     implementation(group = "io.github.classgraph", name = "classgraph", version = "4.8.149")
+    implementation(group = "com.google.code.gson", name = "gson", version = "2.9.1")
+
 
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.9.0")
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.9.0")

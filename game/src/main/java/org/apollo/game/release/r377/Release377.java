@@ -29,6 +29,8 @@ import org.apollo.game.message.impl.RemoveObjectMessage;
 import org.apollo.game.message.impl.RemoveTileItemMessage;
 import org.apollo.game.message.impl.SendFriendMessage;
 import org.apollo.game.message.impl.SendObjectMessage;
+import org.apollo.game.message.impl.SongMessage;
+import org.apollo.game.message.impl.SoundEffectMessage;
 import org.apollo.game.message.impl.SendProjectileMessage;
 import org.apollo.game.message.impl.SendPublicTileItemMessage;
 import org.apollo.game.message.impl.SendTileItemMessage;
@@ -226,6 +228,9 @@ public final class Release377 extends Release {
     register(OpenSidebarMessage.class, new OpenSidebarMessageEncoder());
     register(OpenOverlayMessage.class, new OpenOverlayMessageEncoder());
     register(OpenDialogueOverlayMessage.class, new OpenDialogueOverlayMessageEncoder());
+
+    register(SoundEffectMessage.class, new SendSoundMessageEncoder());
+    register(SongMessage.class, new SendPlaySongMessageEncoder());
   }
 
 }
