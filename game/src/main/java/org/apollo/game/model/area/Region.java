@@ -409,6 +409,10 @@ public final class Region {
     updates.add(message);
   }
 
+  public int getRegionID() {
+    return ((getCoordinates().getX() >> 6) << 8) | (getCoordinates().getY() >> 6);
+  }
+
   /**
    * A {@link RegionListener} for {@link UpdateOperation}s.
    */
