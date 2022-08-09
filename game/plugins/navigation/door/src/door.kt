@@ -1,6 +1,8 @@
 package org.apollo.plugin.navigation.door
 
 import org.apollo.game.action.DistancedAction
+import org.apollo.game.audio.SoundEffects
+import org.apollo.game.message.impl.SoundEffectMessage
 import org.apollo.game.model.Direction
 import org.apollo.game.model.Position
 import org.apollo.game.model.World
@@ -148,6 +150,7 @@ class OpenDoorAction(private val player: Player, private val door: Door, positio
         if (player.world.submit(OpenDoorEvent(player))) {
             player.turnTo(position)
             door.toggle()
+            player.send(SoundEffectMessage(SoundEffects.DOOR_OPEN.id))
         }
         stop()
     }

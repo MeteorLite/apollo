@@ -39,6 +39,12 @@ public final class SoundEffectMessage extends Message {
 		this.delay = delay;
 	}
 
+  public SoundEffectMessage(int id) {
+    this.id = id;
+    this.type = 0;
+    this.delay = 0;
+  }
+
 	/**
 	 * Gets the id of the sound.
 	 *

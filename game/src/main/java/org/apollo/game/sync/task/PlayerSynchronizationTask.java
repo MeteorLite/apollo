@@ -12,6 +12,8 @@ import org.apollo.game.model.area.RegionCoordinates;
 import org.apollo.game.model.area.RegionRepository;
 import org.apollo.game.model.entity.EntityType;
 import org.apollo.game.model.entity.Player;
+import org.apollo.game.model.event.impl.ChangedRegion;
+import org.apollo.game.model.event.impl.LoginEvent;
 import org.apollo.game.sync.block.AppearanceBlock;
 import org.apollo.game.sync.block.ChatBlock;
 import org.apollo.game.sync.block.SynchronizationBlock;
@@ -139,6 +141,10 @@ public final class PlayerSynchronizationTask extends SynchronizationTask {
         position,
         regionChanged, segment, oldCount, segments);
     player.send(message);
+
+    if (regionChanged) {
+      player.getWorld().submit(new ChangedRegion(player, current.hashCode()));
+    }
   }
 
   /**
