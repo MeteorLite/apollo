@@ -7,6 +7,7 @@ import org.apollo.game.message.impl.ClearRegionMessage;
 import org.apollo.game.message.impl.GroupedRegionUpdateMessage;
 import org.apollo.game.message.impl.RegionChangeMessage;
 import org.apollo.game.message.impl.RegionUpdateMessage;
+import org.apollo.game.message.impl.UpdateBaseCoordsMessage;
 import org.apollo.game.model.Position;
 import org.apollo.game.model.area.Region;
 import org.apollo.game.model.area.RegionCoordinates;
@@ -87,6 +88,10 @@ public final class PrePlayerSynchronizationTask extends SynchronizationTask {
     if (local) {
       full.removeAll(oldViewable);
     }
+
+    //Update player baseX/baseY (needed for things like TileItems)
+    RegionCoordinates baseCoords = repository.fromPosition(position).getCoordinates();
+    player.send(new UpdateBaseCoordsMessage(baseCoords.getAbsoluteX(), baseCoords.getAbsoluteY()));
 
     sendUpdates(player.getLastKnownRegion(), differences, full);
   }
