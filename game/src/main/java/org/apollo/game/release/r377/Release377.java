@@ -44,6 +44,7 @@ import org.apollo.game.message.impl.SetWidgetPlayerModelMessage;
 import org.apollo.game.message.impl.SetWidgetTextMessage;
 import org.apollo.game.message.impl.SetWidgetVisibilityMessage;
 import org.apollo.game.message.impl.SwitchTabInterfaceMessage;
+import org.apollo.game.message.impl.UpdateBaseCoordsMessage;
 import org.apollo.game.message.impl.UpdateItemsMessage;
 import org.apollo.game.message.impl.UpdateRunEnergyMessage;
 import org.apollo.game.message.impl.UpdateSkillMessage;
@@ -232,7 +233,7 @@ public final class Release377 extends Release {
     register(SoundEffectMessage.class, new SendSoundMessageEncoder());
     register(SongMessage.class, new SendPlaySongMessageEncoder());
     register(OpenInterfaceMessage.class, new OpenInterfaceMessageEncoder());
-
+    register(UpdateBaseCoordsMessage.class, new UpdateBaseCoordsMessageEncoder());
   }
 
 }
