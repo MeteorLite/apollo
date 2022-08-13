@@ -7,6 +7,9 @@ import org.apollo.game.plugin.entity.spawn.spawnNpc
 
 // 'Above-ground' npcs
 
+spawnNpc("runescape_guide", x = 3096, y = 3108, facing = Direction.WEST)
+spawnNpc("survival_expert", x = 3103, y = 3095, facing = Direction.NORTH)
+
 spawnNpc("master_chef", x = 3076, y = 3085)
 spawnNpc("quest_guide", x = 3086, y = 3122)
 spawnNpc("financial_advisor", x = 3127, y = 3124, facing = Direction.WEST)

@@ -11,7 +11,9 @@ start { world ->
 
         val npc = Npc(world, definition.id, position).apply {
             turnTo(position.step(1, facing))
-            animation?.let(::playAnimation)
+            animation?.let {
+                playAnimation(it.id, 0)
+            }
             graphic?.let(::playGraphic)
         }
 

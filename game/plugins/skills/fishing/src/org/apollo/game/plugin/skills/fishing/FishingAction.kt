@@ -25,7 +25,7 @@ class FishingAction(
         mob.sendMessage(tool.message)
 
         while (isRunning) {
-            mob.playAnimation(tool.animation)
+            mob.playAnimation(tool.animation.id, 0)
             wait(FISHING_DELAY)
 
             val level = mob.fishing.current

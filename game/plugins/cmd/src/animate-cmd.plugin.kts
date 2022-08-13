@@ -7,7 +7,7 @@ on_command("animate", PrivilegeLevel.MODERATOR)
                     ?.let(String::toIntOrNull)
                     ?.let(::Animation)
                     ?.let {
-                        player.playAnimation(it)
+                        player.playAnimation(it.id, 0)
                         return@then
                     }
 

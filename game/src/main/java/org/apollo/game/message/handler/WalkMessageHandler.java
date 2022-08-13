@@ -1,5 +1,7 @@
 package org.apollo.game.message.handler;
 
+import static org.apollo.game.def.Interfaces.INFORMATION_LARGE_FORCED;
+
 import org.apollo.game.message.impl.WalkMessage;
 import org.apollo.game.model.Position;
 import org.apollo.game.model.World;
@@ -37,7 +39,8 @@ public final class WalkMessageHandler extends MessageHandler<WalkMessage> {
     }
 
     queue.setRunning(message.isRunning() || player.isRunning());
-    player.getInterfaceSet().close();
+    if (!player.getInterfaceSet().contains(INFORMATION_LARGE_FORCED.getID()))
+      player.getInterfaceSet().close();
 
     if (queue.size() > 0) {
       player.stopAction();

@@ -36,6 +36,7 @@ fun <T : Entity> Region.find(
  * Note that the iteration order of entities in a [Region] is not defined - this function should not be used if there
  * may be more than [GameObject] with the specified [id] (see [Region.findObjects]).
  */
+
 fun Region.findObject(position: Position, id: Int): GameObject? {
     return find<GameObject>(position, DYNAMIC_OBJECT, STATIC_OBJECT) { it.id == id }
             .firstOrNull()
@@ -54,6 +55,7 @@ fun Region.findObjects(position: Position, id: Int): Sequence<GameObject> {
  * Note that the iteration order of entities in a [Region] is not defined - this function should not be used if there
  * may be more than [GameObject] with the specified [id] (see [World.findObjects]).
  */
+@JvmName("findObject")
 fun World.findObject(position: Position, id: Int): GameObject? {
     return regionRepository.fromPosition(position).findObject(position, id)
 }

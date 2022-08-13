@@ -25,7 +25,7 @@ abstract class MakePotionAction(
             ingredients.forEach { inventory.remove(it) }
             inventory.add(potion.id)
 
-            mob.playAnimation(MIXING_ANIMATION)
+            mob.playAnimation(MIXING_ANIMATION.id, 0)
             mob.sendMessage(message)
             reward()
         }

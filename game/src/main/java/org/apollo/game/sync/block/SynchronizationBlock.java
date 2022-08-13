@@ -24,8 +24,8 @@ public abstract class SynchronizationBlock {
    * @param animation The animation.
    * @return The animation block.
    */
-  public static SynchronizationBlock createAnimationBlock(Animation animation) {
-    return new AnimationBlock(animation);
+  public static SynchronizationBlock createAnimationBlock(int animation, int delay) {
+    return new AnimationBlock(animation, delay);
   }
 
   /**

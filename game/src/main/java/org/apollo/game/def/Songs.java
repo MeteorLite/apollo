@@ -1,4 +1,4 @@
-package org.apollo.game.audio;
+package org.apollo.game.def;
 
 public enum Songs {
 

@@ -10,7 +10,7 @@ class CrushIngredientAction(
 ) : AsyncAction<Player>(0, true, player) {
 
     override fun action(): ActionBlock = {
-        mob.playAnimation(GRINDING_ANIM)
+        mob.playAnimation(GRINDING_ANIM.id, 0)
         wait(pulses = 1)
 
         val inventory = mob.inventory

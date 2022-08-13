@@ -52,7 +52,7 @@ class DummyAction(val player: Player, position: Position) :
     override fun action(): ActionBlock = {
         mob.sendMessage("You hit the dummy.")
         mob.turnTo(position)
-        mob.playAnimation(PUNCH_ANIMATION)
+        mob.playAnimation(PUNCH_ANIMATION.id, 0)
         wait()
 
         val skills = player.skillSet

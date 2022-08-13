@@ -32,7 +32,7 @@ class ConsumeAction(val consumable: Consumable, player: Player, val slot: Int) :
 
     override fun action(): ActionBlock = {
         consumable.consume(mob, slot)
-        mob.playAnimation(Animation(CONSUME_ANIMATION_ID))
+        mob.playAnimation(CONSUME_ANIMATION_ID, 0)
         wait(consumable.delay)
         stop()
     }

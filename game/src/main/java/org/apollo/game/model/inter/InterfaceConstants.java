@@ -13,6 +13,16 @@ public class InterfaceConstants {
   public static final int[] DEFAULT_INVENTORY_TABS = {2423, 3917, 638, 3213, 1644, 5608, 1151, -1,
       5065, 5715, 2449,
       904, 147, 962,};
+
+  public static final int[] TUTORIAL_STEP_0_TABS = {-1, -1, -1, -1, -1, -1, -1, 18128,
+      -1, -1, 2449,
+      -1, -1, -1,};
+  public static final int[] TUTORIAL_STEP_1_TABS = {-1, -1, -1, -1, -1, -1, -1, 18128,
+      -1, -1, 2449,
+      904, -1, -1,};
+  public static final int[] TUTORIAL_STEP_2_TABS = {-1, -1, -1, 3213, -1, -1, -1, 18128,
+      -1, -1, 2449,
+      904, -1, -1,};
   // 6299 = music tab, music disabled
   // 4445 = settings tab, music disabled
   // 12855 = ancients magic

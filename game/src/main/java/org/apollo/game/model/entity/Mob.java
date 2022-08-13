@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.apollo.cache.def.NpcDefinition;
 import org.apollo.game.action.Action;
+import org.apollo.game.def.Animations;
 import org.apollo.game.model.Animation;
 import org.apollo.game.model.Direction;
 import org.apollo.game.model.Graphic;
@@ -438,8 +439,8 @@ public abstract class Mob extends Entity {
    *
    * @param animation The animation.
    */
-  public final void playAnimation(Animation animation) {
-    blockSet.add(SynchronizationBlock.createAnimationBlock(animation));
+  public final void playAnimation(int animation, int delay) {
+    blockSet.add(SynchronizationBlock.createAnimationBlock(animation, delay));
   }
 
   /**
@@ -565,7 +566,7 @@ public abstract class Mob extends Entity {
    * Stops this mob's current {@link Animation}.
    */
   public final void stopAnimation() {
-    playAnimation(Animation.STOP_ANIMATION);
+    playAnimation(Animations.STOP.getID(), 0);
   }
 
   /**

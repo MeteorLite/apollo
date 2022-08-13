@@ -61,9 +61,8 @@ public final class NpcSynchronizationMessageEncoder extends
    * @param builder The builder.
    */
   private static void putAnimationBlock(AnimationBlock block, GamePacketBuilder builder) {
-    Animation animation = block.getAnimation();
-    builder.put(DataType.SHORT, animation.getId());
-    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, animation.getDelay());
+    builder.put(DataType.SHORT, block.getAnimation());
+    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, block.getDelay());
   }
 
   /**

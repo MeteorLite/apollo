@@ -46,7 +46,7 @@ class MiningAction(
         }
 
         mob.sendMessage("You swing your pick at the rock.")
-        mob.playAnimation(tool.animation)
+        mob.playAnimation(tool.animation.id, 0)
 
         wait(tool.pulses)
 

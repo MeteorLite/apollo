@@ -1,5 +1,11 @@
 package org.apollo.game.model.entity;
 
+import static org.apollo.game.def.Configs.TUTORIAL_PROGRESS_BAR_PROGRESS;
+import static org.apollo.game.def.Interfaces.CHANGE_PLAYER_APPEARANCE;
+import static org.apollo.game.def.Interfaces.TUTORIAL_PROGRESS_BAR;
+import static org.apollo.game.def.NPCs.RUNESCAPE_GUIDE;
+import static org.apollo.game.def.NPCs.SURVIVAL_GUIDE;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import java.util.ArrayDeque;
@@ -9,16 +15,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apollo.game.def.Configs;
+import org.apollo.game.def.Dialogues;
+import org.apollo.game.def.Interfaces;
+import org.apollo.game.dialogue.Dialogue;
 import org.apollo.game.message.impl.ConfigMessage;
+import org.apollo.game.message.impl.HintIconMessage.Type;
 import org.apollo.game.message.impl.IdAssignmentMessage;
 import org.apollo.game.message.impl.IgnoreListMessage;
 import org.apollo.game.message.impl.LogoutMessage;
+import org.apollo.game.message.impl.MobHintIconMessage;
+import org.apollo.game.message.impl.PositionHintIconMessage;
 import org.apollo.game.message.impl.SendFriendMessage;
 import org.apollo.game.message.impl.ServerChatMessage;
 import org.apollo.game.message.impl.SetWidgetTextMessage;
 import org.apollo.game.message.impl.SwitchTabInterfaceMessage;
 import org.apollo.game.message.impl.UpdateRunEnergyMessage;
 import org.apollo.game.model.Appearance;
+import org.apollo.game.model.Direction;
 import org.apollo.game.model.Position;
 import org.apollo.game.model.World;
 import org.apollo.game.model.WorldConstants;
@@ -28,7 +42,9 @@ import org.apollo.game.model.entity.attr.AttributeMap;
 import org.apollo.game.model.entity.attr.AttributePersistence;
 import org.apollo.game.model.entity.attr.BooleanAttribute;
 import org.apollo.game.model.entity.attr.NumericalAttribute;
+import org.apollo.game.model.entity.attr.StringAttribute;
 import org.apollo.game.model.entity.obj.DynamicGameObject;
+import org.apollo.game.model.entity.obj.GameObject;
 import org.apollo.game.model.entity.setting.MembershipStatus;
 import org.apollo.game.model.entity.setting.PrivacyState;
 import org.apollo.game.model.entity.setting.PrivilegeLevel;
@@ -49,6 +65,7 @@ import org.apollo.game.model.inv.InventoryListener;
 import org.apollo.game.model.inv.SynchronizationInventoryListener;
 import org.apollo.game.model.skill.LevelUpSkillListener;
 import org.apollo.game.model.skill.SynchronizationSkillListener;
+import org.apollo.game.model.var.VarsManager;
 import org.apollo.game.session.GameSession;
 import org.apollo.game.sync.block.SynchronizationBlock;
 import org.apollo.net.message.Message;
@@ -82,6 +99,10 @@ public final class Player extends Mob {
         AttributeDefinition.forBoolean(false, AttributePersistence.PERSISTENT));
     AttributeMap.define("run_energy",
         AttributeDefinition.forInt(100, AttributePersistence.PERSISTENT));
+    AttributeMap.define("tutorial_progress",
+        AttributeDefinition.forString("0", AttributePersistence.PERSISTENT));
+    AttributeMap.define("has_set_appearance",
+        AttributeDefinition.forBoolean(false, AttributePersistence.PERSISTENT));
   }
 
   /**
@@ -193,6 +214,7 @@ public final class Player extends Mob {
    * The world id of this Player.
    */
   private int worldId = 1;
+
 
   /**
    * Creates the Player.
@@ -867,9 +889,16 @@ public final class Player extends Mob {
       sendMessage("You are currently muted. Other players will not see your chat messages.");
     }
 
-    int[] tabs = InterfaceConstants.DEFAULT_INVENTORY_TABS;
-    for (int tab = 0; tab < tabs.length; tab++) {
-      send(new SwitchTabInterfaceMessage(tab, tabs[tab]));
+    if (getTutorialProgress() < 12) {
+      int[] tabs = InterfaceConstants.TUTORIAL_STEP_0_TABS;
+      for (int tab = 0; tab < tabs.length; tab++) {
+        send(new SwitchTabInterfaceMessage(tab, tabs[tab]));
+      }
+    } else {
+      int[] tabs = InterfaceConstants.DEFAULT_INVENTORY_TABS;
+      for (int tab = 0; tab < tabs.length; tab++) {
+        send(new SwitchTabInterfaceMessage(tab, tabs[tab]));
+      }
     }
 
     inventory.forceRefresh();
@@ -877,7 +906,72 @@ public final class Player extends Mob {
     bank.forceRefresh();
     skillSet.forceRefresh();
 
+    if (world.varsManager == null)
+      world.varsManager = new VarsManager();
+
+    if (getTutorialProgress() == 0) {
+      if (!hasAppearance()) {
+        interfaceSet.openWindow(CHANGE_PLAYER_APPEARANCE.getID());
+      }
+    } else if (getTutorialProgress() == 1) {
+      tutorialStepTwo();
+    } else if (getTutorialProgress() == 2) {
+      tutorialStepThree();
+    } else {
+      System.out.println(getTutorialProgress() + "");
+    }
+
+
     world.submit(new LoginEvent(this));
+  }
+
+  public void tutorialStepTwo() {
+
+    interfaceSet.openOverlay(TUTORIAL_PROGRESS_BAR.getID());
+    send(new ConfigMessage(TUTORIAL_PROGRESS_BAR_PROGRESS.getID(), 1));
+
+    for (Npc npc : world.getNpcRepository()) {
+      if (npc.getId() == RUNESCAPE_GUIDE.getID()) {
+        send(MobHintIconMessage.create(npc));
+        break;
+      }
+    }
+    Dialogue.informationFourLine(this,
+        "@blu@Getting Started",
+        "To start the tutorial use your left mouse button to click on the",
+        "'Runescape Guide' in this room. He is indicated by a flashing",
+        "yellow arrow above his head. If you can't see him, use your",
+        "keyboard's arrow keys to rotate the view.");
+  }
+
+  public void tutorialStepThree() {
+    interfaceSet.openOverlay(TUTORIAL_PROGRESS_BAR.getID());
+    //send(new ConfigMessage(TUTORIAL_PROGRESS_BAR_PROGRESS.getID(), 2));
+
+    send(new PositionHintIconMessage(Type.WEST, new Position(3098, 3107), 115));
+
+    setTutorialProgress(1);
+    Dialogue.informationFourLine(this,
+        "@blu@Interacting with Scenery",
+        "You can interact with many items of scenery by simply clicking",
+        "on them. Right clicking will also give more options. Feel free to",
+        "try it with the things in the room, Then click on the door",
+        "indicated with the yellow arrow to go through to the next instructor");
+  }
+
+  public void tutorialStepFour() {
+    for (Npc npc : world.getNpcRepository()) {
+      if (npc.getId() == SURVIVAL_GUIDE.getID()) {
+        send(MobHintIconMessage.create(npc));
+        break;
+      }
+    }
+    Dialogue.informationFourLine(this,
+        "@blu@Moving around",
+        "Follow the path to find the next instructor. Clicking on the",
+        "ground will walk you to that point. Talk to the survival expert by",
+        "the pond to continue the tutorial. Remember you can rotate",
+        "the view by pressing the arrow keys.");
   }
 
   /**
@@ -1015,4 +1109,51 @@ public final class Player extends Mob {
     skillSet.addListener(new LevelUpSkillListener(this));
   }
 
+  public Integer getTutorialProgress() {
+    Attribute<String> progress = attributes.get("tutorial_progress");
+    return Integer.valueOf(progress.getValue());
+  }
+
+  public void setTutorialProgress(int progress) {
+    attributes.set("tutorial_progress", new StringAttribute(progress + ""));
+  }
+
+  public boolean hasAppearance() {
+    Attribute<Boolean> progress = attributes.get("has_set_appearance");
+    return progress.getValue();
+  }
+
+  public void setHasAppearance(boolean hasAppearance) {
+    attributes.set("has_set_appearance", new BooleanAttribute(hasAppearance));
+  }
+
+  private Dialogues lastDialogue = null;
+
+  public void setLastDialogue(Dialogues dialogue) {
+    lastDialogue = dialogue;
+  }
+
+  public Dialogues getLastDialogue() {
+    return lastDialogue;
+  }
+
+  private Npc lastChattingNPC = null;
+
+  public void setLastChattingNPC(Npc npc) {
+    lastChattingNPC = npc;
+  }
+
+  public Npc getLastChattingNPC() {
+    return lastChattingNPC;
+  }
+
+  public void forceMove(Position initialPosition,
+      Position finalPosition, int travelDurationX, int travelDurationY, Direction direction) {
+    blockSet.add(SynchronizationBlock.createForceMovementBlock(initialPosition,
+        finalPosition, travelDurationX, travelDurationY, direction));
+  }
+
+  public Position getLocalPosition() {
+    return new Position(position.getLocalX(), position.getLocalY(), position.getHeight());
+  }
 }

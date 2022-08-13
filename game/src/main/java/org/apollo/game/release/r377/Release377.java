@@ -231,6 +231,8 @@ public final class Release377 extends Release {
 
     register(SoundEffectMessage.class, new SendSoundMessageEncoder());
     register(SongMessage.class, new SendPlaySongMessageEncoder());
+    register(OpenInterfaceMessage.class, new OpenInterfaceMessageEncoder());
+
   }
 
 }

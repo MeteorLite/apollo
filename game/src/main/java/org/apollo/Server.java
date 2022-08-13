@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apollo.cache.IndexedFileSystem;
+import org.apollo.cache.decoder.VarBitDefinitionDecoder;
 import org.apollo.game.model.World;
 import org.apollo.game.plugin.PluginContext;
 import org.apollo.game.plugin.PluginManager;
@@ -78,6 +79,7 @@ public final class Server {
       SocketAddress http = new InetSocketAddress(NetworkConstants.HTTP_PORT);
       SocketAddress jaggrab = new InetSocketAddress(NetworkConstants.JAGGRAB_PORT);
 
+      //new VarBitDefinitionDecoder().run();
       server.bind(service, http, jaggrab);
     } catch (Throwable t) {
       logger.log(Level.SEVERE, "Error whilst starting server.", t);

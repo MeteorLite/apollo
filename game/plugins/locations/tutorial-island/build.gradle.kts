@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":game"))
     implementation(project(":net"))
     implementation(project(":game:plugins:entity:spawn"))
+    implementation(project(":game:plugins:api"))
 
     testImplementation(project(":game:plugin-testing"))
 }

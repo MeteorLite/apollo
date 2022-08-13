@@ -22,7 +22,7 @@ class CreateTiaraAction(
             player.inventory.remove(blankTiaraId)
             player.inventory.add(tiara.id)
             player.runecraft.experience += tiara.xp
-            player.playAnimation(runecraftingAnimation)
+            player.playAnimation(runecraftingAnimation.id, 0)
             player.playGraphic(runecraftingGraphic)
             stop()
         }

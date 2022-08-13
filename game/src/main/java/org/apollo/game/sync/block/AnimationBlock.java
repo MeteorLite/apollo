@@ -12,15 +12,18 @@ public final class AnimationBlock extends SynchronizationBlock {
   /**
    * The animation.
    */
-  private final Animation animation;
+  private final int animation;
+
+  private final int delay;
 
   /**
    * Creates the animation block.
    *
    * @param animation The animation.
    */
-  AnimationBlock(Animation animation) {
+  AnimationBlock(int animation, int delay) {
     this.animation = animation;
+    this.delay = delay;
   }
 
   /**
@@ -28,8 +31,12 @@ public final class AnimationBlock extends SynchronizationBlock {
    *
    * @return The animation.
    */
-  public Animation getAnimation() {
+  public int getAnimation() {
     return animation;
+  }
+
+  public int getDelay() {
+    return delay;
   }
 
 }

@@ -21,7 +21,7 @@ class RunecraftingAction(val player: Player, val rune: Rune, altar: Altar) :
         }
 
         player.turnTo(position)
-        player.playAnimation(runecraftingAnimation)
+        player.playAnimation(runecraftingAnimation.id, 0)
         player.playGraphic(runecraftingGraphic)
 
         wait(1)

@@ -1,8 +1,9 @@
-package org.apollo.game.audio;
+package org.apollo.game.def;
 
 public enum SoundEffects {
 
-  DOOR_OPEN(326);
+  DOOR_OPEN(326),
+  FIRE_SUCCESSFUL(608);
 
   private final int id;
   SoundEffects(int id) {

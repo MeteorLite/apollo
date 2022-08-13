@@ -13,7 +13,7 @@ class BuryBoneAction(
     override fun action(): ActionBlock = {
         if (mob.inventory.removeSlot(slot, 1) > 0) {
             mob.sendMessage("You dig a hole in the ground...")
-            mob.playAnimation(BURY_BONE_ANIMATION)
+            mob.playAnimation(BURY_BONE_ANIMATION.id, 0)
 
             wait(pulses = 1)
 

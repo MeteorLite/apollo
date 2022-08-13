@@ -70,9 +70,8 @@ public final class PlayerSynchronizationMessageEncoder extends
    * @param builder The builder.
    */
   private static void putAnimationBlock(AnimationBlock block, GamePacketBuilder builder) {
-    Animation animation = block.getAnimation();
-    builder.put(DataType.SHORT, DataOrder.LITTLE, animation.getId());
-    builder.put(DataType.BYTE, DataTransformation.NEGATE, animation.getDelay());
+    builder.put(DataType.SHORT, DataOrder.LITTLE, block.getAnimation());
+    builder.put(DataType.BYTE, DataTransformation.NEGATE, block.getDelay());
   }
 
   /**

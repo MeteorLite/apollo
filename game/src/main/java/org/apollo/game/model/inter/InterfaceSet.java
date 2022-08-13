@@ -1,5 +1,8 @@
 package org.apollo.game.model.inter;
 
+import static org.apollo.game.def.Interfaces.CHANGE_PLAYER_APPEARANCE;
+import static org.apollo.game.def.Interfaces.INFORMATION_LARGE_FORCED;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -154,7 +157,6 @@ public final class InterfaceSet {
    */
   public void openDialogue(DialogueListener listener, int dialogueId) {
     closeAndNotify();
-
     dialogueListener = Optional.ofNullable(listener);
     this.listener = Optional.ofNullable(listener);
 

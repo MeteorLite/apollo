@@ -12,6 +12,7 @@ import org.apollo.cache.IndexedFileSystem;
 import org.apollo.cache.decoder.ItemDefinitionDecoder;
 import org.apollo.cache.decoder.NpcDefinitionDecoder;
 import org.apollo.cache.decoder.ObjectDefinitionDecoder;
+import org.apollo.cache.decoder.VarBitDefinitionDecoder;
 import org.apollo.cache.map.MapIndexDecoder;
 import org.apollo.game.command.CommandDispatcher;
 import org.apollo.game.fs.decoder.SynchronousDecoder;
@@ -30,6 +31,8 @@ import org.apollo.game.model.entity.Player;
 import org.apollo.game.model.event.Event;
 import org.apollo.game.model.event.EventListener;
 import org.apollo.game.model.event.EventListenerChainSet;
+import org.apollo.game.model.event.impl.Pulse;
+import org.apollo.game.model.var.VarsManager;
 import org.apollo.game.plugin.PluginManager;
 import org.apollo.game.scheduling.ScheduledTask;
 import org.apollo.game.scheduling.Scheduler;
@@ -103,6 +106,8 @@ public final class World {
    * The release number (i.e. version) of this world.
    */
   private int releaseNumber;
+
+  public VarsManager varsManager;
 
   /**
    * Gets the collision manager.
@@ -194,6 +199,7 @@ public final class World {
         new ItemDefinitionDecoder(fs),
         new ObjectDefinitionDecoder(fs),
         new MapIndexDecoder(fs),
+        new VarBitDefinitionDecoder(fs),
         EquipmentDefinitionParser.fromFile("data/equipment-" + release + "" + ".dat")
     );
 
@@ -246,6 +252,7 @@ public final class World {
     unregisterNpcs();
     registerNpcs();
     scheduler.pulse();
+    submit(new Pulse());
   }
 
   /**

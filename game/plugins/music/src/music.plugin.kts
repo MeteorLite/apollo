@@ -1,4 +1,4 @@
-import org.apollo.game.audio.Songs
+import org.apollo.game.def.Songs
 import org.apollo.game.message.impl.SongMessage
 import org.apollo.game.model.event.impl.ChangedRegion
 
